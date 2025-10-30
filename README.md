@@ -403,7 +403,7 @@ If you use this work in your research, please cite:
   title={RoastFormer: Transformer-Based Coffee Roast Profile Generation with Flavor Conditioning},
   author={Kraiss, Charlee},
   year={2024},
-  school={[Your University]},
+  school={[Vanderbilt University]},
   type={Master's Capstone Project}
 }
 ```
