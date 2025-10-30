@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Dataset files (IMPORTANT - don't push large data to GitHub!)
+onyx_dataset*/
+*.json
+*.csv
+# Exception: Keep small metadata files
+!dataset_summary.csv
+!complete_dataset.json
+
+# Model checkpoints
+*.pth
+*.ckpt
+*.h5
+checkpoints/
+models/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.bak
+*~
