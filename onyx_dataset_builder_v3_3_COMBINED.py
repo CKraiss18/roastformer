@@ -114,10 +114,34 @@ class OnyxDatasetBuilderV3:
         
         return batch_history
     
+    def _is_coffee_product(self, url):
+        """
+        Check if URL is likely a coffee product (vs gift card, chocolate, etc.)
+
+        Returns:
+            (is_coffee: bool, reason: str)
+        """
+        url_lower = url.lower()
+
+        # Known non-coffee products
+        non_coffee_keywords = [
+            'gift-card', 'gift_card',
+            'chocolate', 'cocoa',
+            'advent-calendar',
+            'cometeer',
+            'subscription',
+        ]
+
+        for keyword in non_coffee_keywords:
+            if keyword in url_lower:
+                return False, f"Non-coffee product ({keyword})"
+
+        return True, "Likely coffee product"
+
     def _check_if_new_batch(self, product_name, current_batch_num, current_roast_date):
         """
         Check if this is a new batch we haven't scraped before
-        
+
         Returns:
             (is_new: bool, reason: str)
         """
@@ -278,194 +302,147 @@ class OnyxDatasetBuilderV3:
             soup = BeautifulSoup(driver.page_source, 'html.parser')
             page_text = soup.get_text()
             
-            # Product name
+            # Product name - remove ALL whitespace (spaces, newlines, tabs)
             title = (soup.find('h1', class_=re.compile(r'product.*title', re.I)) or
                     soup.find('h1', class_=re.compile(r'title', re.I)) or
                     soup.find('h1'))
             
             if title:
-                metadata['product_name'] = title.get_text().strip()
+                product_name = title.get_text().strip()
+                # Remove ALL whitespace characters (spaces, newlines, tabs)
+                product_name = re.sub(r'\s+', '', product_name)
+                metadata['product_name'] = product_name
             else:
                 metadata['product_name'] = url.split('/')[-1].replace('-', ' ').title()
             
-            # ===== PHASE 1 FEATURES =====
+            # ===== EXTRACT FROM STAT DIVS (DOM-BASED, ACCURATE) =====
+            # Each stat has: <div class="a-stat">VALUE\nLABEL</div>
+            # We parse by matching the LABEL, not position
             
-            # 1. ORIGIN - "Colombia, Ethiopia"
-            origin_patterns = [
-                r'ORIGIN[:\s]*([^\n]+)',
-                r'origin[:\s]*([^\n]+)',
-            ]
-            for pattern in origin_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    origin_text = match.group(1).strip()
-                    # Clean up common suffixes
-                    origin_text = re.sub(r'\s*(VARIETY|PROCESS|HARVEST).*', '', origin_text, flags=re.I)
-                    metadata['origin'] = origin_text[:100]
-                    break
+            stat_divs = soup.find_all('div', class_='a-stat')
             
-            # 2. PROCESS - "Washed", "Natural", etc.
-            process_keywords = ['washed', 'natural', 'honey', 'anaerobic', 'wet hulled', 
-                              'pulped natural', 'semi-washed', 'experimental']
-            page_text_lower = page_text.lower()
-            for keyword in process_keywords:
-                if keyword in page_text_lower:
-                    metadata['process'] = keyword.title()
-                    break
-            
-            # 3. ROAST LEVEL - "Expressive Light Agtron #135"
-            roast_level_patterns = [
-                r'(Expressive\s+Light|Expressive\s+Dark|Light|Medium|Dark|Full\s+City)',
-                r'ROAST\s+LEVEL[:\s]*([^\n]+)',
-            ]
-            for pattern in roast_level_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    roast_text = match.group(1).strip()
-                    # Remove Agtron number if present
-                    roast_clean = re.sub(r'Agtron.*', '', roast_text, flags=re.I).strip()
+            for stat in stat_divs:
+                stat_text = stat.get_text('\n', strip=True)
+                lines = [line.strip() for line in stat_text.split('\n') if line.strip()]
+                
+                if len(lines) < 2:
+                    continue
+                
+                # Last line is the label, everything before is the value
+                label = lines[-1].upper()
+                value = ' '.join(lines[:-1])
+                
+                # Parse based on label
+                if 'ORIGIN' in label:
+                    metadata['origin'] = value[:100]
+                
+                elif 'VARIETY' in label or 'VARIETAL' in label:
+                    metadata['variety'] = value[:100]
+                
+                elif 'HARVEST SEASON' in label:
+                    metadata['harvest_season'] = value[:100]
+                
+                elif 'PROCESS METHOD' in label:
+                    metadata['process'] = value[:50]
+                
+                elif 'ROAST LEVEL' in label:
+                    # Extract roast level without Agtron
+                    roast_clean = re.sub(r'Agtron.*', '', value, flags=re.I).strip()
                     metadata['roast_level'] = roast_clean[:50]
-                    break
+                    
+                    # Extract Agtron number
+                    agtron_match = re.search(r'#?(\d+)', value)
+                    if agtron_match:
+                        metadata['roast_level_agtron'] = int(agtron_match.group(1))
+                
+                elif 'ALTITUDE' in label or 'ELEVATION' in label:
+                    metadata['altitude'] = value
+                    # Extract numeric
+                    altitude_match = re.search(r'(\d+(?:-\d+)?)', value)
+                    if altitude_match:
+                        altitude_str = altitude_match.group(1)
+                        if '-' in altitude_str:
+                            nums = [int(n) for n in altitude_str.split('-')]
+                            metadata['altitude_numeric'] = sum(nums) // len(nums)
+                        else:
+                            metadata['altitude_numeric'] = int(altitude_str)
+                
+                elif 'DRYING METHOD' in label or 'DRYING' in label:
+                    metadata['drying_method'] = value[:50]
+                
+                elif 'PRODUCTION ROASTER' in label or 'ROASTER' in label:
+                    metadata['roaster_machine'] = value[:100]
+                
+                elif 'PREFERRED EXTRACTION' in label or 'EXTRACTION' in label:
+                    metadata['preferred_extraction'] = value[:50]
+                
+                elif 'CAFFEINE' in label:
+                    caffeine_match = re.search(r'(\d+)', value)
+                    if caffeine_match:
+                        metadata['caffeine_mg'] = int(caffeine_match.group(1))
             
-            # 4. AGTRON NUMBER - "#135"
-            agtron_match = re.search(r'Agtron\s*#?(\d+)', page_text, re.I)
-            if agtron_match:
-                metadata['roast_level_agtron'] = int(agtron_match.group(1))
-            
-            # 5. TARGET FINISH TEMP - Infer from Agtron or roast level
+            # Calculate derived values
             metadata['target_finish_temp'] = self._infer_finish_temp(
                 metadata['roast_level'], 
                 metadata['roast_level_agtron']
             )
             
-            # ===== PHASE 2 FEATURES =====
+            if metadata['altitude_numeric']:
+                # Bean density proxy from altitude
+                base_density = 0.65
+                altitude_km = metadata['altitude_numeric'] / 1000.0
+                metadata['bean_density_proxy'] = round(base_density + (altitude_km * 0.05), 4)
             
-            # 6. VARIETY - "Mixed", "Heirloom", "Caturra"
-            variety_patterns = [
-                r'VARIETY[:\s]*([^\n]+)',
-                r'Variet(?:y|ies)[:\s]*([^\n]+)',
-            ]
-            for pattern in variety_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    variety_text = match.group(1).strip()
-                    # Clean up
-                    variety_text = re.sub(r'\s*(HARVEST|PROCESS|ORIGIN).*', '', variety_text, flags=re.I)
-                    metadata['variety'] = variety_text[:100]
-                    break
+            # 14. FLAVOR NOTES - "Berries Stone Fruit Earl Grey Honeysuckle Round"
+            # Based on DOM inspection: flavors are in <p class="tasting-notes kapra"> with <span class="note"> children
+            try:
+                tasting_notes = soup.find('p', class_='tasting-notes')
+                if tasting_notes:
+                    # Extract all <span class="note"> elements
+                    note_spans = tasting_notes.find_all('span', class_='note')
+                    if note_spans:
+                        flavor_notes = [span.get_text(strip=True) for span in note_spans]
+                        
+                        # Create raw flavor text (space-separated)
+                        flavor_raw = ' '.join(flavor_notes)
+                        metadata['flavor_notes_raw'] = flavor_raw
+                        
+                        # Convert to uppercase for categorization
+                        flavor_notes_upper = [note.upper() for note in flavor_notes]
+                        metadata['flavor_notes_parsed'] = flavor_notes_upper
+                        
+                        # Categorize flavors
+                        metadata['flavor_categories'] = self._categorize_flavors(flavor_notes_upper)
+            except Exception as e:
+                pass
             
-            # 7. ALTITUDE - "1500 MASL" or "1800-2200m"
-            altitude_patterns = [
-                r'ELEVATION[:\s]*(\d+(?:-\d+)?)\s*(?:MASL|m|meters)',
-                r'(\d+(?:-\d+)?)\s*(?:MASL|m|meters)',
-                r'altitude[:\s]*(\d+(?:-\d+)?)\s*(?:MASL|m|meters)',
-            ]
-            for pattern in altitude_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    altitude_str = match.group(1)
-                    metadata['altitude'] = f"{altitude_str} MASL"
-                    
-                    # Calculate numeric average
-                    if '-' in altitude_str:
-                        low, high = map(int, altitude_str.split('-'))
-                        metadata['altitude_numeric'] = (low + high) / 2
-                    else:
-                        metadata['altitude_numeric'] = int(altitude_str)
-                    
-                    # 8. BEAN DENSITY PROXY - Higher altitude = denser beans
-                    # Rough formula: density increases ~0.05 g/cm³ per 1000m
-                    # Base density ~0.65 g/cm³ at sea level
-                    if metadata['altitude_numeric']:
-                        base_density = 0.65
-                        altitude_km = metadata['altitude_numeric'] / 1000.0
-                        metadata['bean_density_proxy'] = base_density + (altitude_km * 0.05)
-                    break
-            
-            # 9. DRYING METHOD - "Raised-Bed Dried"
-            drying_patterns = [
-                r'(Raised-Bed|Patio|African\s+Bed|Mechanical|Sun)\s*Dried?',
-                r'DRYING\s+METHOD[:\s]*([^\n]+)',
-            ]
-            for pattern in drying_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    drying_text = match.group(1).strip()
-                    metadata['drying_method'] = drying_text[:50]
-                    break
-            
-            # ===== ADDITIONAL CONTEXT =====
-            
-            # 10. HARVEST SEASON - "Rotating Microlots"
-            harvest_patterns = [
-                r'HARVEST\s+SEASON[:\s]*([^\n]+)',
-                r'Harvest[:\s]*([^\n]+)',
-            ]
-            for pattern in harvest_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    harvest_text = match.group(1).strip()
-                    # Clean up (remove process info if included)
-                    harvest_text = re.sub(r'\s*Wa\s*$', '', harvest_text)  # Remove trailing "Wa"
-                    metadata['harvest_season'] = harvest_text[:100]
-                    break
-            
-            # 11. ROASTER MACHINE - "Loring S70 Peregrine"
-            roaster_patterns = [
-                r'(Loring|Probat|Diedrich|Giesen)\s+[A-Z0-9\s]+(?:Peregrine)?',
-                r'PRODUCTION\s+ROASTER[:\s]*([^\n]+)',
-            ]
-            for pattern in roaster_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    roaster_text = match.group(0).strip() if 'Loring' in pattern else match.group(1).strip()
-                    metadata['roaster_machine'] = roaster_text[:100]
-                    break
-            
-            # 12. PREFERRED EXTRACTION - "Filter & Espresso"
-            extraction_patterns = [
-                r'(Filter\s*&\s*Espresso|Filter|Espresso|Omni)',
-                r'PREFERRED\s+EXTRACTION[:\s]*([^\n]+)',
-            ]
-            for pattern in extraction_patterns:
-                match = re.search(pattern, page_text, re.I)
-                if match:
-                    extraction_text = match.group(1).strip()
-                    metadata['preferred_extraction'] = extraction_text[:50]
-                    break
-            
-            # 13. CAFFEINE - "215mg"
-            caffeine_match = re.search(r'(\d+)\s*mg', page_text, re.I)
-            if caffeine_match:
-                metadata['caffeine_mg'] = int(caffeine_match.group(1))
-            
-            # 14. FLAVOR NOTES - "BERRIES STONE FRUIT EARL GREY HONEYSUCKLE ROUND"
-            # Pattern: All-caps text right before "Filter & Espresso" or "PREFERRED EXTRACTION"
-            flavor_patterns = [
-                r'([A-Z][A-Z\s]{15,150}?)\s*(?:Filter|PREFERRED\s+EXTRACTION)',
-                r'geometry\s*\n\s*([A-Z][A-Z\s]{15,150}?)\s*Filter',
-            ]
-            
-            for pattern in flavor_patterns:
-                flavor_match = re.search(pattern, page_text, re.MULTILINE)
-                if flavor_match:
-                    flavor_text = flavor_match.group(1).strip()
-                    
-                    # Clean up - remove product name if present
-                    flavor_text = re.sub(r'^\w+\s*$', '', flavor_text, flags=re.MULTILINE).strip()
-                    
-                    # Store raw flavor text
-                    metadata['flavor_notes_raw'] = flavor_text
-                    
-                    # Parse into individual notes
-                    flavor_words = flavor_text.split()
-                    # Filter out very short words and common non-flavor terms
-                    flavor_notes = [w for w in flavor_words if len(w) > 2 and w not in ['THE', 'AND', 'OR', 'WITH']]
-                    metadata['flavor_notes_parsed'] = flavor_notes
-                    
-                    # Categorize flavors
-                    metadata['flavor_categories'] = self._categorize_flavors(flavor_notes)
-                    break
+            # Fallback if DOM extraction fails - try regex patterns
+            if not metadata.get('flavor_notes_raw'):
+                flavor_patterns = [
+                    r'([A-Z][A-Z\s]{15,150}?)\s*(?:Filter|PREFERRED\s+EXTRACTION)',
+                    r'geometry\s*\n\s*([A-Z][A-Z\s]{15,150}?)\s*Filter',
+                ]
+                
+                for pattern in flavor_patterns:
+                    flavor_match = re.search(pattern, page_text, re.MULTILINE)
+                    if flavor_match:
+                        flavor_text = flavor_match.group(1).strip()
+                        
+                        # Clean up - remove product name if present
+                        flavor_text = re.sub(r'^\w+\s*$', '', flavor_text, flags=re.MULTILINE).strip()
+                        
+                        # Store raw flavor text
+                        metadata['flavor_notes_raw'] = flavor_text
+                        
+                        # Parse into individual notes
+                        flavor_words = flavor_text.split()
+                        # Filter out very short words and common non-flavor terms
+                        flavor_notes = [w for w in flavor_words if len(w) > 2 and w not in ['THE', 'AND', 'OR', 'WITH']]
+                        metadata['flavor_notes_parsed'] = flavor_notes
+                        
+                        # Categorize flavors
+                        metadata['flavor_categories'] = self._categorize_flavors(flavor_notes)
+                        break
             
             # Legacy roast info patterns (batch, date, etc.)
             roast_patterns = {
@@ -573,15 +550,16 @@ class OnyxDatasetBuilderV3:
         # Default to medium
         return 410.0
     
-    def scrape_roast_profile(self, url):
+    def scrape_roast_profile(self, url, max_retries=2):
         """
         Step 2: Scrape individual roast profile with enhanced metadata
+        Includes retry logic for network/loading issues
         """
         driver = self.setup_driver()
-        
+
         try:
             driver.get(url)
-            time.sleep(8)  # Wait for amCharts to load
+            time.sleep(12)  # Wait longer for amCharts to load (was 8, now 12)
             
             # Extract enhanced metadata
             metadata = self.extract_enhanced_metadata(driver, url)
@@ -593,6 +571,9 @@ class OnyxDatasetBuilderV3:
                 print(f"    ⚠️  No chart found on page")
                 return None
             
+            # Wait a bit more to ensure JavaScript is fully executed
+            time.sleep(2)
+
             # Extract roast profile from amCharts
             chart_data_script = """
             if (window.am5 && window.am5.registry.rootElements) {
@@ -733,10 +714,23 @@ class OnyxDatasetBuilderV3:
         
         for i, url in enumerate(product_urls, start=resume_from + 1):
             product_name = url.split('/')[-1].replace('-', ' ').title()
-            
+
             print(f"\n[{i}/{resume_from + len(product_urls)}] {product_name}")
             print(f"  URL: {url}")
-            
+
+            # Check if this is a coffee product
+            is_coffee, coffee_reason = self._is_coffee_product(url)
+            if not is_coffee:
+                print(f"  ⊘ Skipped: {coffee_reason}")
+                failed_products.append({
+                    'index': i,
+                    'name': product_name,
+                    'url': url,
+                    'skip_reason': coffee_reason
+                })
+                time.sleep(0.5)  # Small delay
+                continue
+
             profile = self.scrape_roast_profile(url)
             
             if profile:
