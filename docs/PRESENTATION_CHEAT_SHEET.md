@@ -105,13 +105,22 @@
    - Add penalties for physics violations to training loss
    - Model learns to respect constraints
 
-3. **Non-Autoregressive Architectures** (Diffusion Models)
+3. **Multi-Roaster Dataset with Diverse Styles** (CRITICAL!)
+   - **Not just more Onyx data** - need 10+ diverse roasters
+   - Equipment diversity: Loring, Probat, Diedrich (drum), Sivetz (fluid bed)
+   - Style diversity: Nordic light, traditional medium, French dark
+   - Geographic diversity: US, Europe, Asia, Africa roasting cultures
+   - **Key insight**: Scale alone ≠ diversity. 500 from one roaster < 200 from 10 roasters
+   - Model currently learns "Onyx's style" not "how to roast"
+
+4. **Duration Prediction Module**
+   - Current: User specifies duration (design choice, like target temp)
+   - Future: Model predicts optimal duration for coffee
+   - "This dense Ethiopian at 2100m needs 11.5 min for light roast"
+
+5. **Non-Autoregressive Architectures** (Diffusion Models)
    - Generate entire sequence at once
    - No error accumulation
-
-4. **Larger Multi-Roaster Dataset** (500+ profiles)
-   - More data → better pattern learning
-   - Transfer learning across roaster styles
 
 **Closing**:
 > "Despite current limitations, RoastFormer demonstrates feasibility of transformer-based profile generation, validates flavor conditioning as a meaningful feature, and identifies clear paths forward with literature-backed solutions. This represents a proof-of-concept with practical potential for specialty coffee."

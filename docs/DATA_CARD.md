@@ -221,19 +221,48 @@ This dataset enables research on transformer-based coffee roast profile generati
 
 ### Known Issues & Biases
 
-#### 1. **Single-Roaster Bias** (Critical)
+#### 1. **Single-Roaster Bias** (CRITICAL - Most Important Limitation!)
 
-**Issue**: All data from Onyx Coffee Lab
-- **Machine**: Loring S70 Peregrine only (no drum roasters, no Probat, etc.)
-- **Style**: Modern light roasting (high-charge, fast development)
-- **Philosophy**: Championship-level specialty (not typical roasting)
+**Issue**: All 144 profiles from ONE roaster = learning Onyx's "house style"
+
+**Why This Matters More Than Sample Size**:
+- **Scale ≠ Diversity**: Even 500+ Onyx profiles would still only represent Onyx's style
+- **House Style Phenomenon**: Each roaster has signature approach (like a chef's cooking style)
+- **Equipment Dependence**: All profiles from Loring S70 Peregrine only
+  - No drum roasters (Probat, Diedrich, Giesen)
+  - No fluid bed roasters (Sivetz)
+  - No direct-fire roasters
+  - Heat transfer, airflow, thermal mass all differ by equipment
+
+**Onyx's Specific Style** (Championship-Level Modern Light Roasting):
+- High-charge temperatures (420-430°F vs traditional 400°F)
+- Fast development times (modern Nordic approach)
+- Competition-optimized (cupping scores, not consumer preference)
+- Fruit-forward, expressive (72% light roasts)
+- Specialty-exclusive (no commodity-grade profiles)
+
+**What Model Actually Learns**: "How Onyx roasts coffee" NOT "How to roast coffee"
 
 **Impact**:
-- Model may not generalize to other roasters
-- Profiles optimized for competition/cupping, not consumer preference
-- Underrepresents traditional roasting styles
+- Model may not generalize to other roasters, equipment, or styles
+- Generated profiles reflect Onyx philosophy (may not suit other roasters)
+- Underrepresents traditional European styles, dark roasts, commercial roasting
+- Equipment-specific patterns (Loring convection) won't transfer to drum roasters
 
-**Mitigation**: Clearly document source, validate on user's equipment
+**What's Really Needed** (Critical Future Work):
+- 500+ profiles from **10+ diverse roasters** (not 500 from Onyx!)
+- Equipment diversity: Loring + Probat + Diedrich + Giesen + Sivetz
+- Style diversity: Nordic light + traditional medium + French dark + espresso
+- Geographic diversity: US + Europe + Asia + Africa roasting cultures
+- Skill levels: Championship + specialty + commercial + home roasters
+
+**Key Lesson**: **Diversity > Scale**. Better to have 200 profiles from 10 roasters than 500 from one roaster.
+
+**Mitigation**:
+- Clearly document Onyx-specific nature
+- Validate on user's specific equipment and style
+- Recommend as "starting point" requiring adaptation
+- Future dataset expansion prioritizes roaster diversity over Onyx volume
 
 #### 2. **Light Roast Bias** (High)
 

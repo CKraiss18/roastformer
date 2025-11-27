@@ -91,6 +91,36 @@ Model achieves reasonable temperature accuracy (25°F MAE) but violates physics 
 
 ---
 
+### Design Decision: Duration as Input Parameter
+
+**Observation**: All generated profiles are 600 seconds (10 minutes)
+
+**Why?** Duration is an **input parameter**, not a model prediction:
+- User specifies: `target_duration=600` (like specifying target finish temp)
+- Model generates temperature trajectory for that specified duration
+- Training data had variable durations (7-16 min, mean 11.2 min)
+
+**Is This a Limitation?**
+
+**Arguments for Design Choice** ✅:
+- Roasters control duration based on desired roast level (darker = longer)
+- Duration is a valid conditioning variable (like target temp, flavors)
+- Gives user control over roast length
+- Model learns: "For a 10-min light roast, use THIS temperature trajectory"
+
+**Arguments for Limitation** ⚠️:
+- Model doesn't learn "optimal duration" for a given coffee
+- Real roasters adjust duration dynamically based on bean response
+- Smarter model might predict: "This dense Ethiopian needs 11.5 min for light roast"
+- User must know desired duration beforehand
+
+**Future Enhancement**:
+Add duration prediction module: Given bean characteristics + target roast level → predict optimal duration, then generate profile for that duration.
+
+**For Presentation**: Frame as conscious design choice with enhancement opportunity, not a bug.
+
+---
+
 ## 🔬 Part 3: Attempted Solution - Physics-Constrained Generation (LESSONS LEARNED 📚)
 
 ### Hypothesis
@@ -216,16 +246,35 @@ loss_total = loss_prediction + 0.1 * loss_monotonicity + 0.1 * loss_bounded_ror
 
 ---
 
-### 4. Larger Dataset with Transfer Learning
+### 4. Multi-Roaster Dataset with Diverse Styles (CRITICAL!)
 
-**Problem**: 123 samples insufficient to learn complex roast dynamics
+**Problem**: 123 Onyx profiles = learning ONE championship roaster's style
 
-**Solution**:
-- Collect 500+ profiles from multiple roasters
-- Pre-train on large coffee dataset
-- Fine-tune on specific roaster style
+**Why More Onyx Data Isn't Enough**:
+- Even 500+ Onyx profiles = still learning Onyx's "house style"
+- Onyx specializes in high-charge, fast development (modern light roasting)
+- All on Loring S70 (no drum roasters, no fluid bed, no direct-fire)
+- Competition-optimized profiles (not typical consumer preferences)
 
-**Benefit**: More data → better pattern learning → better generation
+**What We Really Need**:
+- **500+ profiles from 10+ diverse roasters**
+- Equipment diversity: Loring, Probat, Diedrich, Giesen (drum), Sivetz (fluid bed)
+- Style diversity: Nordic light, traditional medium, French dark, espresso
+- Geographic diversity: US, Europe, Asia, Africa roasting cultures
+- Skill levels: Championship, specialty, commercial
+
+**Why This Matters**:
+- Each roaster has a signature style (like a chef's cooking style)
+- Equipment fundamentally shapes profiles (heat transfer, airflow, thermal mass)
+- Cultural preferences differ dramatically (Scandinavia vs Italy vs Japan)
+- Model currently learns "how Onyx roasts" not "how to roast"
+
+**Benefit**:
+- True generalization across roasting styles
+- Transfer learning across equipment types
+- Personalization: "Generate profile in MY style for new coffee"
+
+**Lesson**: **Scale alone ≠ diversity. 500 profiles from one roaster < 200 profiles from 10 roasters.**
 
 ---
 

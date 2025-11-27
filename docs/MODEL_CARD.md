@@ -56,6 +56,44 @@ Early Stopping: Patience=20
 
 ---
 
+## Design Decisions
+
+### Duration as Input Parameter
+
+**Design Choice**: Users specify `target_duration` (seconds) as an input parameter, similar to target finish temperature.
+
+**Rationale**:
+- Roasters control duration based on desired roast level (light=shorter, dark=longer)
+- Duration is a valid conditioning variable (like target temp, flavors)
+- Gives users explicit control over roast length
+- Model learns: "For a 10-minute light roast, use THIS temperature trajectory"
+
+**How It Works**:
+```python
+# User specifies duration when generating
+profile = model.generate(
+    origin='Ethiopia',
+    roast_level='Light',
+    flavors=['berries', 'floral'],
+    target_duration=600  # 10 minutes (user choice)
+)
+# Model generates 600 temperature values
+```
+
+**Training Data Context**:
+- Training profiles had variable durations (420-960s, mean 672s / 11.2 min)
+- Model learned different trajectory patterns for different durations
+- Can generate any length within max_seq_len=1000
+
+**Alternative Approach (Future Work)**:
+Add duration prediction module that predicts optimal duration based on bean characteristics and desired roast level, then generates profile for that predicted duration.
+
+**Example**: "This dense Ethiopian bean at 2100m altitude targeting light roast should be roasted for 11.5 minutes" → generate 690-second profile.
+
+**Current Status**: Duration is treated as a user-controlled parameter, not a model prediction.
+
+---
+
 ## Intended Use
 
 ### Primary Use Case
