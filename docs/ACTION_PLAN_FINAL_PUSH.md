@@ -1,6 +1,6 @@
 # Final Push: Fix + Fresh Data + Retrain
 
-**Date**: November 19, 2024
+**Date**: November 19, 2025
 **Goal**: Get a working model with normalized temperatures + more training data
 
 ---

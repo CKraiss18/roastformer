@@ -35,7 +35,7 @@ Based on Onyx's product pages:
 | Altitude | 60-80% | 1500 MASL, 1800-2200m |
 | Bean Density | 60-80% | 0.70-0.78 g/cm³ (calculated) |
 | Drying Method | 40-60% | Raised-Bed, Patio, African Bed |
-| Harvest Season | 60-80% | Rotating Microlots, October, 2024 |
+| Harvest Season | 60-80% | Rotating Microlots, October, 2025 |
 | Roaster Machine | 90-100% | Loring S70 Peregrine |
 | Extraction | 100% | Filter & Espresso, Filter, Espresso |
 | Caffeine | 100% | 215mg, 195mg |

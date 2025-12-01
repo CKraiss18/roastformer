@@ -13,15 +13,15 @@
 ```bash
 # Oct 28 scrape
 python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
-# Creates: onyx_dataset_2024_10_28/
+# Creates: onyx_dataset_2025_10_28/
 
 # Nov 3 scrape (run same command!)
 python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
-# Creates: onyx_dataset_2024_11_03/
+# Creates: onyx_dataset_2025_11_03/
 
 # Nov 10 scrape (run same command!)
 python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
-# Creates: onyx_dataset_2024_11_10/
+# Creates: onyx_dataset_2025_11_10/
 ```
 
 **NO editing needed!** Directory name automatically includes today's date.
@@ -67,7 +67,7 @@ profiles/
 
 ### **First Run (Oct 28):**
 ```
-✓ Dataset directory: onyx_dataset_2024_10_28/
+✓ Dataset directory: onyx_dataset_2025_10_28/
 ✓ ADDITIVE mode: Date-stamped, won't overwrite previous scrapes
 ✓ Batch history loaded: 0 products tracked
 ✓ No previous scrapes found - starting fresh
@@ -82,7 +82,7 @@ profiles/
 
 ### **Second Run (Nov 3):**
 ```
-✓ Dataset directory: onyx_dataset_2024_11_03/
+✓ Dataset directory: onyx_dataset_2025_11_03/
 ✓ ADDITIVE mode: Date-stamped, won't overwrite previous scrapes
 ✓ Batch history loaded: 28 products tracked
   Found 1 previous scrape(s)
@@ -104,7 +104,7 @@ profiles/
 
 ### **Third Run (Nov 10):**
 ```
-✓ Dataset directory: onyx_dataset_2024_11_10/
+✓ Dataset directory: onyx_dataset_2025_11_10/
 ✓ Batch history loaded: 33 products tracked
   Found 2 previous scrape(s)
 
@@ -126,7 +126,7 @@ profiles/
 After multiple scrapes:
 ```
 your_project/
-├── onyx_dataset_2024_10_28/
+├── onyx_dataset_2025_10_28/
 │   ├── complete_dataset.json    (28 profiles)
 │   ├── dataset_summary.csv
 │   ├── profiles/
@@ -135,7 +135,7 @@ your_project/
 │   │   └── ...
 │   └── README.md
 │
-├── onyx_dataset_2024_11_03/
+├── onyx_dataset_2025_11_03/
 │   ├── complete_dataset.json    (5 NEW profiles)
 │   ├── dataset_summary.csv
 │   ├── profiles/
@@ -144,7 +144,7 @@ your_project/
 │   │   └── ...
 │   └── README.md
 │
-└── onyx_dataset_2024_11_10/
+└── onyx_dataset_2025_11_10/
     ├── complete_dataset.json    (12 NEW profiles)
     ├── dataset_summary.csv
     ├── profiles/
@@ -164,10 +164,10 @@ Total: 28 + 5 + 12 = 45 profiles across 3 scrapes!
 # On Nov 3, builder loads Oct 28 data:
 batch_history = {
     'Geometry': [
-        {'batch_number': '12345', 'roast_date': '2024-10-25', 'source_dir': 'onyx_dataset_2024_10_28'}
+        {'batch_number': '12345', 'roast_date': '2025-10-25', 'source_dir': 'onyx_dataset_2025_10_28'}
     ],
     'Monarch': [
-        {'batch_number': '56789', 'roast_date': '2024-10-24', 'source_dir': 'onyx_dataset_2024_10_28'}
+        {'batch_number': '56789', 'roast_date': '2025-10-24', 'source_dir': 'onyx_dataset_2025_10_28'}
     ],
     ...
 }

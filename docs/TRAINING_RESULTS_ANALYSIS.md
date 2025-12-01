@@ -1,8 +1,8 @@
 # RoastFormer: Training Results Analysis
 
-> **⚠️ OUTDATED - See [`COMPREHENSIVE_RESULTS.md`](COMPREHENSIVE_RESULTS.md) for Final Results (Nov 20, 2024)** ⚠️
+> **⚠️ OUTDATED - See [`COMPREHENSIVE_RESULTS.md`](COMPREHENSIVE_RESULTS.md) for Final Results (Nov 20, 2025)** ⚠️
 >
-> **This document contains preliminary experiments from Nov 18, 2024 (before normalization fix was validated).**
+> **This document contains preliminary experiments from Nov 18, 2025 (before normalization fix was validated).**
 >
 > **UPDATED RESULTS**: After fixing normalization and running comprehensive experiments (Nov 20):
 > - **BEST MODEL**: d=256 (10.4°F RMSE) - Opposite of prediction!
@@ -13,12 +13,12 @@
 
 ---
 
-## Legacy Document: Preliminary Experiments (Nov 18, 2024)
+## Legacy Document: Preliminary Experiments (Nov 18, 2025)
 
 **Author**: Charlee Kraiss
 **Project**: Transformer-Based Coffee Roast Profile Generation
-**Course**: Generative AI Theory (Fall 2024)
-**Training Date**: November 18, 2024 (OUTDATED)
+**Course**: Generative AI Theory (Fall 2025)
+**Training Date**: November 18, 2025 (OUTDATED)
 **Results Package**: `roastformer_ALL_EXPERIMENTS_20251118_151724.zip`
 
 **Note**: This represents early experiments before comprehensive ablation studies. Loss values reported here are raw validation losses, not RMSE.
@@ -58,7 +58,7 @@
 
 ### Training Summary
 
-**Date**: November 18, 2024
+**Date**: November 18, 2025
 **Total Experiments**: 5
 **Success Rate**: 5/5 (100%) ✅
 **Total Training Time**: ~2 minutes (all experiments)
@@ -761,5 +761,5 @@ Parameters: 6,376,673
 
 ---
 
-*Last Updated: November 18, 2024*
+*Last Updated: November 18, 2025*
 *For questions or clarifications, reference this document in future Claude sessions.*

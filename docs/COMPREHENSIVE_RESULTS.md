@@ -1,6 +1,6 @@
 # RoastFormer: Comprehensive Experimental Results
 
-**Date**: November 20, 2024
+**Date**: November 20, 2025
 **Experiments**: 7 complete ablation studies
 **Key Finding**: d=256 model achieved best results (10.4°F RMSE) - opposite of prediction!
 

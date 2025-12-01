@@ -2,9 +2,9 @@
 
 **Project**: Transformer-Based Coffee Roast Profile Generation
 **Student**: Charlee Kraiss
-**Course**: Generative AI Theory (Fall 2024)
-**Created**: November 19, 2024
-**Target Completion**: December 2024
+**Course**: Generative AI Theory (Fall 2025)
+**Created**: November 19, 2025
+**Target Completion**: December 2025
 
 ---
 
@@ -234,7 +234,7 @@
     - d_model: 64 (tiny), 32 (micro), 128 (medium)
     - Layers: 3 (tiny), 2 (micro), 4 (medium)
     - Training data: 28-36 Onyx Coffee Lab roast profiles
-    - Training date: November 2024
+    - Training date: November 2025
   - Intended Uses:
     - ✅ Research into transformer-based time-series generation
     - ✅ Educational demonstration of conditional generation
@@ -268,10 +268,10 @@
 
 - [ ] Create `DATA_CARD.md`
   - Dataset Details:
-    - Name: Onyx Coffee Lab Roast Profiles (2024)
+    - Name: Onyx Coffee Lab Roast Profiles (2025)
     - Source: https://onyxcoffeelab.com
     - Collection method: Automated web scraping (v3.3)
-    - Collection date: October-November 2024
+    - Collection date: October-November 2025
     - Size: 28-36 roast profiles
     - Resolution: 1-second intervals, 400-1000 timesteps per profile
   - Data Fields:
@@ -877,6 +877,6 @@ Rest and recharge! 🦃
 
 ---
 
-*Last Updated: November 19, 2024*
-*Estimated Completion: November 30, 2024*
+*Last Updated: November 19, 2025*
+*Estimated Completion: November 30, 2025*
 *Target Score: 115-120/125 pts (92-96%)*

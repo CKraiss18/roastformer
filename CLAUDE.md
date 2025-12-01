@@ -2,7 +2,7 @@
 
 **Project**: Transformer-Based Coffee Roast Profile Generation  
 **Developer**: Charlee Kraiss  
-**Timeline**: Oct 2024 - Nov 2024 (Capstone Project)  
+**Timeline**: Oct 2025 - Nov 2025 (Capstone Project)  
 **Repository**: https://github.com/CKraiss18/roastformer
 
 ---
@@ -19,7 +19,7 @@ Generate physically plausible coffee roast profiles using transformer architectu
 
 ---
 
-## 📊 Current Project Status (Nov 3, 2024)
+## 📊 Current Project Status (Nov 3, 2025)
 
 ### ✅ **Completed**
 - [x] Dataset collection pipeline (Onyx scraper v3.3)
@@ -251,8 +251,8 @@ assert (np.abs(np.diff(temps)) < 10/60).all()  # <10°F per second
 
 ### **Onyx Validation Set**
 - **Source**: https://onyxcoffeelab.com (championship-winning specialty roaster)
-- **Profiles collected**: 28-36 (as of Nov 3, 2024)
-- **Temporal range**: Oct-Nov 2024
+- **Profiles collected**: 28-36 (as of Nov 3, 2025)
+- **Temporal range**: Oct-Nov 2025
 - **Format**: JSON (individual profiles) + CSV (summary)
 - **Collection method**: Automated web scraping with batch tracking
 
@@ -459,7 +459,7 @@ from pathlib import Path
 @pytest.fixture
 def sample_profile():
     """Load a sample Onyx profile for testing"""
-    with open('onyx_dataset_2024_11_03/profiles/geometry_batch93187.json') as f:
+    with open('onyx_dataset_2025_11_03/profiles/geometry_batch93187.json') as f:
         return json.load(f)
 
 @pytest.fixture
@@ -541,7 +541,7 @@ def validate_profile(real_profile, generated_profile, target_finish_temp):
 
 ---
 
-## 🎓 Capstone Timeline (Nov 2024)
+## 🎓 Capstone Timeline (Nov 2025)
 
 ### **Week 1: Nov 3-8** (Baseline Implementation)
 - **Mon-Tue**: Data validation pipeline, integrate with architecture
@@ -850,5 +850,5 @@ This is a 28-36 sample dataset. Key strategies:
 
 **Ready to build RoastFormer! ☕🤖**
 
-*Last updated: November 3, 2024*
+*Last updated: November 3, 2025*
 *For questions: Reference this file, proposal PDF, or architecture reference*

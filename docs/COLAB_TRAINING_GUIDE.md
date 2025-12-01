@@ -2,7 +2,7 @@
 
 **Complete workflow for training on Colab and sharing results with Claude**
 
-Date: November 2024
+Date: November 2025
 Author: Charlee Kraiss
 
 ---

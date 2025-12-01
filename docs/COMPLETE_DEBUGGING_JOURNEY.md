@@ -1,7 +1,7 @@
 # The Complete Debugging Journey: From Model Collapse to Success
 
 **Project**: RoastFormer - Transformer-Based Roast Profile Generation
-**Timeline**: November 18-19, 2024
+**Timeline**: November 18-19, 2025
 **Author**: Charlee Kraiss
 
 ---

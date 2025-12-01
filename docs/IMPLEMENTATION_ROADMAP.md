@@ -110,7 +110,7 @@ python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
 # Total: 40-50 profiles
 
 # Step 7: Rerun data preparation
-python 01_data_preparation.py --dataset onyx_dataset_2024_11_10
+python 01_data_preparation.py --dataset onyx_dataset_2025_11_10
 
 # New split: ~35 train, ~10 val (MUCH BETTER!)
 

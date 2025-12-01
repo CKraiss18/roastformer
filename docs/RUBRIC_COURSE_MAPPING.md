@@ -1,7 +1,7 @@
 # RoastFormer: Rubric & Course Concept Mapping
 
 **Purpose**: Explicit mapping of evaluation findings to rubric requirements and course concepts
-**Date**: November 20, 2024
+**Date**: November 20, 2025
 **Target Score**: 110-120/125 points (88-96%)
 
 ---
@@ -352,7 +352,7 @@
 - **Parameters**: 6,376,673
 - **Training Data**: 123 roast profiles from Onyx Coffee Lab
 - **Performance**: 10.4°F RMSE (training), 25°F MAE (generation)
-- **Date**: November 2024
+- **Date**: November 2025
 - **License**: MIT
 
 ## Intended Use
@@ -385,7 +385,7 @@
 - **Name**: Onyx Roast Profiles
 - **Size**: 144 profiles (123 train, 21 val)
 - **Source**: Onyx Coffee Lab public profiles
-- **Date Range**: October-November 2024
+- **Date Range**: October-November 2025
 - **Format**: JSON time-series + metadata CSV
 
 ## Features

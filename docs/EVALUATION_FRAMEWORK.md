@@ -2,8 +2,8 @@
 
 **Author**: Charlee Kraiss
 **Project**: Transformer-Based Coffee Roast Profile Generation
-**Course**: Generative AI Theory (Fall 2024)
-**Date**: November 2024
+**Course**: Generative AI Theory (Fall 2025)
+**Date**: November 2025
 
 ---
 

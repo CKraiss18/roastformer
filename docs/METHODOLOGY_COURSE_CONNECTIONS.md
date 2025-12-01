@@ -2,8 +2,8 @@
 
 **Project**: Transformer-Based Coffee Roast Profile Generation
 **Student**: Charlee Kraiss
-**Course**: Generative AI Theory (Fall 2024)
-**Date**: November 2024
+**Course**: Generative AI Theory (Fall 2025)
+**Date**: November 2025
 
 ---
 
@@ -754,4 +754,4 @@ lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(πt/T))
 
 **This methodology demonstrates application of core course concepts (transformers, attention, conditional generation) to a novel domain (coffee roasting), with careful consideration of theoretical foundations, domain constraints, and small-data challenges.**
 
-*Document Version 1.0 - November 11, 2024*
+*Document Version 1.0 - November 11, 2025*

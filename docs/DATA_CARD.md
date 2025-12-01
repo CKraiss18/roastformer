@@ -2,7 +2,7 @@
 
 **Dataset Name**: Onyx Coffee Lab Roast Profile Validation Set
 **Version**: v1.0
-**Date**: November 2024
+**Date**: November 2025
 **Curator**: Charlee Kraiss
 **Source**: https://onyxcoffeelab.com
 
@@ -24,11 +24,11 @@ This dataset enables research on transformer-based coffee roast profile generati
 - **Specialty**: Championship-level light roasting (80+ SCA scores)
 - **Philosophy**: Expressive, fruit-forward profiles highlighting origin character
 
-**Data Availability**: Publicly accessible roast profiles shared via product pages (as of Nov 2024)
+**Data Availability**: Publicly accessible roast profiles shared via product pages (as of Nov 2025)
 
 ### Collection Methodology
 
-**Collection Period**: October-November 2024
+**Collection Period**: October-November 2025
 **Collection Method**: Automated web scraping with batch tracking
 - **Tool**: `onyx_dataset_builder_v3_3_COMBINED.py`
 - **Frequency**: Weekly updates
@@ -59,9 +59,9 @@ This dataset enables research on transformer-based coffee roast profile generati
 ### Temporal Coverage
 
 - **Earliest Profile**: 2019
-- **Latest Profile**: November 2024
+- **Latest Profile**: November 2025
 - **Span**: ~5 years
-- **Seasonal Representation**: All seasons (crop years 2019-2024)
+- **Seasonal Representation**: All seasons (crop years 2019-2025)
 
 ### Geographic Coverage (Origins)
 
@@ -290,7 +290,7 @@ This dataset enables research on transformer-based coffee roast profile generati
 
 #### 4. **Temporal Bias** (Low)
 
-**Issue**: Data from 2019-2024 (modern era)
+**Issue**: Data from 2019-2025 (modern era)
 - Reflects current specialty coffee trends (light roasts, experimental processes)
 - Lacks historical roasting practices
 
@@ -473,7 +473,7 @@ for flavor in flavor_notes:
 
 ### Update Schedule
 
-**Monthly** (Oct-Nov 2024):
+**Monthly** (Oct-Nov 2025):
 - Scrape new Onyx profiles
 - Validate quality
 - Deduplicate against existing data
@@ -486,7 +486,7 @@ for flavor in flavor_notes:
 ### Versioning
 
 **Current Version**: v1.0 (144 profiles)
-**Release Date**: November 20, 2024
+**Release Date**: November 20, 2025
 **Next Version**: v2.0 (planned multi-roaster expansion, 500+ profiles)
 
 ### Known Bugs
@@ -512,7 +512,7 @@ for flavor in flavor_notes:
 
 **Coffee Origins**: Gratitude to coffee farmers in Ethiopia, Colombia, Guatemala, Kenya, and beyond for producing exceptional coffees that make this research possible.
 
-**Course Support**: Vanderbilt University Generative AI Theory (Fall 2024) for guidance on dataset curation and evaluation methodology.
+**Course Support**: Vanderbilt University Generative AI Theory (Fall 2025) for guidance on dataset curation and evaluation methodology.
 
 ---
 
@@ -521,10 +521,10 @@ for flavor in flavor_notes:
 If you use this dataset in your work, please cite:
 
 ```bibtex
-@dataset{kraiss2024onyxdataset,
+@dataset{kraiss2025onyxdataset,
   author = {Kraiss, Charlee},
   title = {Onyx Coffee Lab Roast Profile Validation Set},
-  year = {2024},
+  year = {2025},
   version = {v1.0},
   source = {Onyx Coffee Lab (https://onyxcoffeelab.com)},
   institution = {Vanderbilt University},
@@ -553,6 +553,6 @@ Used with attribution for non-commercial research purposes.
 
 ---
 
-**Last Updated**: November 20, 2024
+**Last Updated**: November 20, 2025
 **Contact**: charlee.kraiss@vanderbilt.edu
 **Dataset DOI**: (to be assigned upon public release)

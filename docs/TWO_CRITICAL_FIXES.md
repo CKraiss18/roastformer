@@ -1,6 +1,6 @@
 # RoastFormer: Two Critical Fixes
 
-**Date**: November 19, 2024
+**Date**: November 19, 2025
 **Author**: Charlee Kraiss
 **Project**: Transformer-Based Coffee Roast Profile Generation
 
@@ -169,7 +169,7 @@ Original (51,843:1): RMSE ~50-100°F (massive overfitting despite normalization)
 
 ---
 
-## 🎯 EXPERIMENTAL RESULTS UPDATE (November 20, 2024)
+## 🎯 EXPERIMENTAL RESULTS UPDATE (November 20, 2025)
 
 ### The Surprise: We Were Wrong!
 
@@ -457,6 +457,6 @@ Even though the initial experiments failed, this work demonstrates:
 
 ---
 
-*Last Updated: November 20, 2024*
+*Last Updated: November 20, 2025*
 *Status: ✅ EXPERIMENTS COMPLETE - Surprising result: d=256 won (10.4°F RMSE)!*
 *Key Finding: Normalization was THE bug. Regularization > capacity limits.*

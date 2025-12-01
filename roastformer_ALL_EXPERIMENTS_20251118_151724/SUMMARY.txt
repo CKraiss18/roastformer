@@ -1,0 +1,83 @@
+RoastFormer Comprehensive Experiment Results
+Generated: 2025-11-18 15:17:41
+
+═══════════════════════════════════════════════════════════════
+EXPERIMENTS RUN
+═══════════════════════════════════════════════════════════════
+
+Total Experiments: 5
+Successful: 5
+Failed: 0
+
+
+────────────────────────────────────────────────────────────
+Experiment: BASELINE_SINUSOIDAL
+Status: SUCCESS
+Positional Encoding: sinusoidal
+d_model: 256
+Best Val Loss: 70947.5547°F
+Final Epoch: 16
+Training Time: 0.4 minutes
+
+────────────────────────────────────────────────────────────
+Experiment: LEARNED_PE
+Status: SUCCESS
+Positional Encoding: learned
+d_model: 256
+Best Val Loss: 71204.8646°F
+Final Epoch: 16
+Training Time: 0.4 minutes
+
+────────────────────────────────────────────────────────────
+Experiment: ROPE_PE
+Status: SUCCESS
+Positional Encoding: rope
+d_model: 256
+Best Val Loss: 71085.1536°F
+Final Epoch: 16
+Training Time: 0.4 minutes
+
+────────────────────────────────────────────────────────────
+Experiment: NO_FLAVORS
+Status: SUCCESS
+Positional Encoding: sinusoidal
+d_model: 256
+Best Val Loss: 71363.1250°F
+Final Epoch: 16
+Training Time: 0.4 minutes
+
+────────────────────────────────────────────────────────────
+Experiment: SMALL_MODEL
+Status: SUCCESS
+Positional Encoding: sinusoidal
+d_model: 128
+Best Val Loss: 74014.1172°F
+Final Epoch: 16
+Training Time: 0.2 minutes
+
+════════════════════════════════════════════════════════════
+BEST MODEL
+════════════════════════════════════════════════════════════
+Experiment: baseline_sinusoidal
+Positional Encoding: sinusoidal
+d_model: 256
+Best Val Loss: 70947.5547°F
+Parameters: 6,376,673
+
+════════════════════════════════════════════════════════════
+FILES INCLUDED
+════════════════════════════════════════════════════════════
+1. experiment_comparison.csv - Table comparing all experiments
+2. all_experiments_training_curves.png - Training curves visualization
+3. checkpoints/ - Best model from each experiment
+4. results/ - Detailed results JSON for each experiment
+5. SUMMARY.txt - This file
+
+════════════════════════════════════════════════════════════
+NEXT STEPS
+════════════════════════════════════════════════════════════
+1. Share SUMMARY.txt with Claude for analysis
+2. Review experiment_comparison.csv for best model
+3. Use best checkpoint for evaluation (RoastFormer_Evaluation_Demo.ipynb)
+4. Include results in capstone presentation
+5. Write evaluation framework based on these results

@@ -1,6 +1,6 @@
 # CRITICAL FIX: Temperature Normalization
 
-**Date**: November 19, 2024
+**Date**: November 19, 2025
 **Author**: Charlee Kraiss
 **Issue**: Model Collapse - All models predict constant ~3-10°F
 **Root Cause**: Temperatures not normalized before training

@@ -1,6 +1,6 @@
 # RoastFormer Transformer Setup - Complete ✅
 
-**Date**: November 6, 2024
+**Date**: November 6, 2025
 **Status**: Ready for training (not trained yet, as requested)
 
 ---
@@ -57,8 +57,8 @@ I've created a full production-ready transformer training system that integrates
 - 97 unique flavor notes
 
 **Latest scrapes:**
-- Nov 6, 2024: 15 new profiles
-- Nov 5, 2024: 24 new profiles
+- Nov 6, 2025: 15 new profiles
+- Nov 5, 2025: 24 new profiles
 
 ---
 

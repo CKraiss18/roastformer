@@ -79,8 +79,8 @@ RoastFormer learns the relationship between roast profiles and flavor outcomes f
 Real roast profiles from [Onyx Coffee Lab](https://onyxcoffeelab.com), a championship-winning specialty roaster using the Loring S70 Peregrine roaster.
 
 **Dataset Statistics:**
-- **Profiles collected**: 49 (as of Oct 31, 2024, growing daily)
-- **Temporal range**: Oct 30-31, 2024
+- **Profiles collected**: 49 (as of Oct 31, 2025, growing daily)
+- **Temporal range**: Oct 30-31, 2025
 - **Resolution**: 1-second intervals
 - **Duration**: 9-15 minutes per profile
 - **Roasting style**: High-charge, light-to-medium roasts
@@ -219,7 +219,7 @@ scikit-learn>=1.3.0
 # Scrape Onyx Coffee Lab profiles (additive, won't duplicate)
 python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
 
-# Output: onyx_dataset_2024_MM_DD/
+# Output: onyx_dataset_2025_MM_DD/
 ```
 
 ### **2. Explore Data**
@@ -228,7 +228,7 @@ python onyx_dataset_builder_v3.1_ADDITIVE_FINAL.py
 import pandas as pd
 
 # Load dataset
-df = pd.read_csv('onyx_dataset_2024_11_03/dataset_summary.csv')
+df = pd.read_csv('onyx_dataset_2025_11_03/dataset_summary.csv')
 
 # Check feature coverage
 print(df[['origin', 'process', 'roast_level', 'flavor_notes_raw']].head())
@@ -245,7 +245,7 @@ from src.model import RoastFormer
 from src.train import train_roastformer
 
 # Load data
-dataset = RoastProfileDataset('onyx_dataset_2024_11_03/')
+dataset = RoastProfileDataset('onyx_dataset_2025_11_03/')
 
 # Initialize model
 model = RoastFormer(
@@ -338,7 +338,7 @@ roastformer/
 
 ## 📈 Results
 
-### **Baseline Performance** (As of Nov 2024)
+### **Baseline Performance** (As of Nov 2025)
 
 | Metric | Target | Current | Status |
 |--------|--------|---------|--------|
@@ -408,10 +408,10 @@ Planned experiments:
 If you use this work in your research, please cite:
 
 ```bibtex
-@mastersthesis{kraiss2024roastformer,
+@mastersthesis{kraiss2025roastformer,
   title={RoastFormer: Transformer-Based Coffee Roast Profile Generation with Flavor Conditioning},
   author={Kraiss, Charlee},
-  year={2024},
+  year={2025},
   school={[Vanderbilt University]},
   type={Master's Capstone Project}
 }
@@ -438,7 +438,7 @@ If you use this work in your research, please cite:
 
 ## 🎓 About
 
-This project is part of a Master's capstone project, Fall 2024.
+This project is part of a Master's capstone project, Fall 2025.
 
 **Project Goals:**
 1. Demonstrate transformer application to time-series generation
@@ -472,7 +472,7 @@ python src/generate.py --origin Ethiopia --flavors "berries,floral"
 
 ### Recent Updates
 
-**Oct 31, 2024 - Infrastructure Complete! 🎉**
+**Oct 31, 2025 - Infrastructure Complete! 🎉**
 - ✅ Built complete production-ready training infrastructure (Option B)
 - ✅ Created src/ directory with proper organization
 - ✅ Implemented physics-based validation (100% pass rate on 49 profiles)
@@ -484,13 +484,13 @@ python src/generate.py --origin Ethiopia --flavors "berries,floral"
 - ✅ Enhanced scraper (v3.3) with better error handling
 - ✅ Pushed 6,144 lines of code to GitHub
 
-**Oct 30, 2024 - Data Collection & Debugging**
+**Oct 30, 2025 - Data Collection & Debugging**
 - ✅ Fixed scraper issues (19 → 36 profiles)
 - ✅ Increased chart load wait times
 - ✅ Added non-coffee product filtering
 - ✅ Validated all profiles against physics constraints
 
-**Oct 28, 2024**
+**Oct 28, 2025**
 - ✅ Initial dataset collection
 - ✅ Basic transformer architecture implemented
 - ✅ Feature extraction pipeline complete
@@ -503,4 +503,4 @@ python src/generate.py --origin Ethiopia --flavors "berries,floral"
 
 ---
 
-*Last updated: October 31, 2024*
+*Last updated: October 31, 2025*

@@ -1,5 +1,5 @@
 # RoastFormer Training & Experiment Plan
-**Created**: November 13, 2024
+**Created**: November 13, 2025
 **Purpose**: Strategic roadmap for capstone completion (rubric-optimized)
 **Target Score**: 105-115/125 points (84-92%)
 
@@ -632,7 +632,7 @@ From your rubric doc:
 
 ---
 
-**Last Updated**: November 13, 2024
+**Last Updated**: November 13, 2025
 **Status**: Ready to begin Experiment 1 (Baseline)
 **Next Action**: Train baseline model in Colab with sinusoidal PE
 

@@ -1,6 +1,6 @@
 # Critical Finding: Model Collapse During Autoregressive Generation
 
-**Date**: November 18, 2024
+**Date**: November 18, 2025
 **Project**: RoastFormer - Transformer-Based Roast Profile Generation
 **Author**: Charlee Kraiss
 
@@ -303,7 +303,7 @@ This failure is VALUABLE for the capstone because:
 
 ---
 
-## ✅ Resolution: Two Critical Fixes (Nov 19, 2024)
+## ✅ Resolution: Two Critical Fixes (Nov 19, 2025)
 
 **📚 See `TWO_CRITICAL_FIXES.md` for comprehensive analysis, slide suggestions, and presentation materials**
 

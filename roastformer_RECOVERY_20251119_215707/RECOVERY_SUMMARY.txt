@@ -1,0 +1,62 @@
+RoastFormer Recovery Experiment Results
+Generated: 2025-11-19 21:57:08
+
+═══════════════════════════════════════════════════════════════
+RECOVERY EXPERIMENTS
+═══════════════════════════════════════════════════════════════
+
+Purpose: Fix model collapse from original experiments
+Original Issue: 6.4M param model predicted constant 16°F
+Root Cause: Model too large for 123 training samples
+
+Recovery Strategies:
+1. Smaller models (64/32 d_model)
+2. Lower learning rates (1e-5)
+3. Higher dropout (0.3)
+4. Combined fixes
+
+═══════════════════════════════════════════════════════════════
+RESULTS
+═══════════════════════════════════════════════════════════════
+
+  Experiment  d_model  Layers    LR  Dropout Parameters Params/Sample Val Loss   RMSE TF MAE    Status
+high_dropout      128       4 1e-04     0.30  1,088,993          8854 73920.68 271.88 291.09 ⚠️  Check
+  tiny_model       64       3 1e-04     0.10    218,273          1775 75471.53 274.72 294.37 ⚠️  Check
+      low_lr      128       4 1e-05     0.10  1,088,993          8854 75724.89 275.18 294.84 ⚠️  Check
+combined_fix       64       3 5e-05     0.25    218,273          1775 76150.68 275.95 295.78 ⚠️  Check
+ micro_model       32       2 1e-04     0.10     45,665           371 76797.22 277.12 297.11 ⚠️  Check
+
+═══════════════════════════════════════════════════════════════
+KEY FINDINGS
+═══════════════════════════════════════════════════════════════
+
+Teacher Forcing Performance:
+- Tests if models learned patterns (using real temps)
+- MAE < 50°F = Model learned, issue is autoregressive gap
+- MAE > 100°F = Model didn't learn, fundamental failure
+
+Best Recovery Model: high_dropout
+- d_model: 128
+- Params/Sample: 8854
+- Teacher Forcing MAE: 291.09°F
+
+═══════════════════════════════════════════════════════════════
+NEXT STEPS
+═══════════════════════════════════════════════════════════════
+
+1. Test best model in evaluation notebook
+2. Check if generation works (varying temps, not constant)
+3. Document findings in critical analysis
+4. If still fails: Propose scheduled sampling for future work
+
+═══════════════════════════════════════════════════════════════
+SCIENTIFIC VALUE
+═══════════════════════════════════════════════════════════════
+
+This systematic debugging demonstrates:
+✅ Understanding of model capacity vs dataset size
+✅ Hypothesis-driven experimentation
+✅ Diagnostic methodology (teacher forcing, generation tests)
+✅ Scientific integrity (honest reporting of failures)
+
+Even if generation still fails, this analysis is VALUABLE for capstone!

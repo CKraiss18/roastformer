@@ -1,0 +1,60 @@
+RoastFormer Comprehensive Experiment Results
+Generated: 2025-11-20 15:21:37
+
+═══════════════════════════════════════════════════════════════
+COMPREHENSIVE ABLATION STUDIES
+═══════════════════════════════════════════════════════════════
+
+Total Experiments: 7
+Successful: 7
+
+Study 1: Model Size (d=32 vs d=64 vs d=128)
+Study 2: Positional Encoding (sinusoidal vs learned vs RoPE)
+Study 3: Flavor Conditioning (with vs without flavors)
+Study 4: Debugging (broken vs fixed)
+
+═══════════════════════════════════════════════════════════════
+RESULTS SUMMARY
+═══════════════════════════════════════════════════════════════
+
+   Experiment  d_model  Layers Pos. Encoding Flavors Normalized Parameters Best RMSE (°F)  Final Epoch Time (min)
+original_d256      256       6    sinusoidal       ✅          ✅  6,376,673           10.4           16        0.4
+  medium_d128      128       4    sinusoidal       ✅          ✅  1,088,993           16.5           16        0.2
+     tiny_d64       64       3    sinusoidal       ✅          ✅    218,273           23.4           16        0.2
+   no_flavors       64       3    sinusoidal       ❌          ✅    218,273           27.2           16        0.2
+      rope_pe       64       3          rope       ✅          ✅    218,273           28.1           16        0.2
+   learned_pe       64       3       learned       ✅          ✅    269,473           43.8           16        0.2
+    micro_d32       32       2    sinusoidal       ✅          ✅     45,665           49.3           15        0.3
+
+═══════════════════════════════════════════════════════════════
+KEY FINDINGS
+═══════════════════════════════════════════════════════════════
+
+Best Model: original_d256
+Configuration: d_model=256, sinusoidal PE
+Performance: 10.4°F RMSE
+
+For your presentation:
+1. Show positional encoding comparison (validates your RoPE presentation)
+2. Show flavor ablation (validates novel contribution)
+3. Show model size impact (demonstrates understanding of capacity)
+4. Show broken vs fixed (demonstrates debugging methodology)
+
+═══════════════════════════════════════════════════════════════
+FILES INCLUDED
+═══════════════════════════════════════════════════════════════
+
+1. comprehensive_comparison.csv - Full results table
+2. comprehensive_analysis.png - 4-panel visualization
+3. checkpoints/*.pt - All trained models
+4. results/*.json - Detailed training logs
+5. SUMMARY.txt - This file
+
+═══════════════════════════════════════════════════════════════
+NEXT STEPS
+═══════════════════════════════════════════════════════════════
+
+1. Use best checkpoint in evaluation demo
+2. Include ablation results in presentation
+3. Cite these experiments in methodology writeup
+4. Share with Claude for analysis and insights

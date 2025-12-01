@@ -1,9 +1,9 @@
 # RoastFormer Model Card
 
 **Version**: v1.0
-**Date**: November 2024
+**Date**: November 2025
 **Authors**: Charlee Kraiss
-**Institution**: Vanderbilt University - Generative AI Theory (Fall 2024)
+**Institution**: Vanderbilt University - Generative AI Theory (Fall 2025)
 
 ---
 
@@ -121,7 +121,7 @@ Add duration prediction module that predicts optimal duration based on bean char
   - Validation: 21 profiles (15%)
 - **Roaster**: Loring S70 Peregrine
 - **Batch Size**: 10-50 lbs
-- **Temporal Coverage**: 2019-2024
+- **Temporal Coverage**: 2019-2025
 - **Geographic Coverage**: 15+ coffee origins
 - **Resolution**: 1-second intervals
 
@@ -374,12 +374,12 @@ assert validate_physics(profile), "Profile failed physics checks - DO NOT USE"
 If you use RoastFormer in your work, please cite:
 
 ```bibtex
-@software{kraiss2024roastformer,
+@software{kraiss2025roastformer,
   author = {Kraiss, Charlee},
   title = {RoastFormer: Flavor-Conditioned Coffee Roast Profile Generation with Transformers},
-  year = {2024},
+  year = {2025},
   institution = {Vanderbilt University},
-  course = {Generative AI Theory (Fall 2024)},
+  course = {Generative AI Theory (Fall 2025)},
   url = {https://github.com/CKraiss18/roastformer}
 }
 ```
@@ -396,6 +396,6 @@ If you use RoastFormer in your work, please cite:
 
 ---
 
-**Last Updated**: November 20, 2024
+**Last Updated**: November 20, 2025
 **Status**: Research Prototype (NOT production-ready)
 **License**: MIT (code), CC BY-NC 4.0 (data/documentation)

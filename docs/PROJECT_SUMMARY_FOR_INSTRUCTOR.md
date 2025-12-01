@@ -1,7 +1,7 @@
 # RoastFormer: Project Summary for AI Showcase Consideration
 
 **Student**: Charlee Kraiss
-**Course**: Generative AI Theory (Fall 2024)
+**Course**: Generative AI Theory (Fall 2025)
 **Project**: Transformer-Based Coffee Roast Profile Generation
 **Repository**: https://github.com/CKraiss18/roastformer
 
@@ -118,7 +118,7 @@ Model: RoastFormer (Best: d=256)
 
 ### Data
 
-**Source**: Onyx Coffee Lab (2019 US Roaster Champions)
+**Source**: Scraped Onyx Coffee Lab (2019 US Roaster Champions) - Transparent Coffee Roaster, posts daily roast profiles on website
 **Size**: 144 roast profiles
 - Training: 123 profiles (85%)
 - Validation: 21 profiles (15%)
@@ -515,49 +515,6 @@ temp_normalized = (temp - temp.min()) / (temp.max() - temp.min())
 
 ---
 
-## Presentation Format Note
-
-**README-Based Presentation** (No Slides):
-- GitHub README.md will serve as presentation
-- Visual: Architecture diagram, ablation charts, real vs generated comparisons
-- Live demo potential: Generate profile from user-specified features
-- Code snippets: Show conditioning module, generation function
-- Results tables: Training metrics, ablation studies, physics compliance
-
-**Advantages**:
-- Permanent reference (stays on GitHub)
-- Code-integrated (can link to implementations)
-- Reproducible (includes installation, usage)
-- Accessible (anyone can review anytime)
-
----
-
-## Question for Instructor
-
-**Would RoastFormer be appropriate for the AI showcase?**
-
-**Strengths**:
-- Novel domain + novel contribution (flavor conditioning)
-- Systematic experiments (7 ablations, proper validation)
-- Honest scientific process (documented failures, root cause analysis)
-- Strong course integration (6 weeks of concepts applied)
-- Clear technical depth (architecture choices, multi-modal conditioning)
-
-**Concerns**:
-- Small dataset (144 profiles) - is this a limitation for showcase?
-- Current 0% physics compliance - does failure limit showcase potential?
-- Domain-specific (coffee) - is this too niche vs broader AI audience?
-
-**My Assessment**: The combination of practical application + novel technical contribution + honest scientific process + surprising results (d=256 won, constrained failed) makes this showcase-worthy. The failures are valuable—they demonstrate research maturity and understanding of root causes.
-
-**Your thoughts?** Would love your perspective on:
-1. Is the novel contribution (flavor conditioning) significant enough?
-2. Does the small-data success (51,843:1 ratio) demonstrate valuable techniques?
-3. Are the documented negative results (constrained generation) valuable or limiting?
-4. What would make this stronger for showcase context?
-
----
-
 ## Repository & Documentation
 
 **GitHub**: https://github.com/CKraiss18/roastformer
@@ -601,6 +558,3 @@ I believe this would engage an AI audience by demonstrating **transformers beyon
 **Thank you for considering RoastFormer for the showcase. I'd greatly appreciate your feedback!**
 
 ---
-
-**Contact**: charlee.kraiss@vanderbilt.edu
-**Last Updated**: November 27, 2024

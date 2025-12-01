@@ -1,15 +1,15 @@
 # RoastFormer: Project Completion Plan & Checkpoint
 
-**Created**: November 17, 2024
+**Created**: November 17, 2025
 **Purpose**: Master roadmap for capstone completion - keeps both human & AI aligned
 **Target**: 110-120/125 points (88-96%)
-**Presentation Date**: Early December 2024
+**Presentation Date**: Early December 2025
 
 ---
 
 ## 🎯 Strategic Overview
 
-### Current Status Snapshot (Nov 17, 2024)
+### Current Status Snapshot (Nov 17, 2025)
 
 | Component | Status | Points | Notes |
 |-----------|--------|--------|-------|
@@ -170,7 +170,7 @@
 - **Required Elements**:
   - Model version/architecture (d_model, layers, heads, parameters)
   - Intended uses (help roasters create starting profiles)
-  - Training data (Onyx dataset, 144 profiles, Oct-Nov 2024)
+  - Training data (Onyx dataset, 144 profiles, Oct-Nov 2025)
   - Performance metrics (MAE, DTW, from evaluation)
   - Limitations (single roaster, small dataset, specialty coffee focus)
   - Ethical considerations (automation impact, accessibility)
@@ -594,8 +594,8 @@ When starting a new session, share this document to get Claude up to speed:
 
 ---
 
-**Last Updated**: November 17, 2024
-**Next Checkpoint**: November 18, 2024 (after training completes)
+**Last Updated**: November 17, 2025
+**Next Checkpoint**: November 18, 2025 (after training completes)
 **Status**: Week 1, Day 1 - ON TRACK ✅
 
 ---
