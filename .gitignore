@@ -44,3 +44,80 @@ logs/
 *.tmp
 *.bak
 *~
+
+# ============================================
+# REPO CLEANUP - Keep locally, hide from GitHub
+# ============================================
+
+# Working/planning documents (internal development notes)
+CLAUDE.md
+COLAB_UPDATE_PLAN.md
+NORMALIZATION_FIX_READY.md
+RECOVERY_EXPERIMENTS_ADDITION.md
+ROASTFORMER_COMPLETION_ROADMAP.md
+STATUS_AND_NEXT_STEPS.md
+ROASTFORMER_ARCHITECTURE_REFERENCE.py
+
+# Old/duplicate notebooks (keep only _COMPREHENSIVE and _COMPLETE)
+RoastFormer_Training_Suite.ipynb
+RoastFormer_Training_Suite_FIXED.ipynb
+RoastFormer_Training_Suite_RECOVERY.ipynb
+RoastFormer_Evaluation_Demo.ipynb
+RoastFormer_Colab_Training.ipynb
+
+# Test and debug files
+test_*.py
+test_*.log
+test_output.log
+colab_debug_extraction.txt
+colab_fixed_extraction_cell.py
+colab_simple_fix.py
+diagnose_data.py
+test_scrape/
+tests/
+
+# Old scraper versions (keep only v3.3)
+onyx_dataset_builder_v3_2_FIXED.py
+
+# Internal utility scripts
+package_for_colab.py
+package_for_colab_COMPLETE.py
+share_results_with_claude.py
+upload_individual_files.py
+prepare_training_data.py
+train_baseline.py
+train_tiny_model.py
+
+# Binary and duplicate documents
+costa_rica.numbers
+*.docx
+Project Development Timeline*.pdf
+Project Proposal - RUBRIC.pdf
+Kraiss_Charlee_RoastFormer.pdf
+
+# Results folders (keep only evaluation and comprehensive folders from 11/20)
+results/
+roastformer_ALL_EXPERIMENTS*/
+roastformer_RECOVERY*/
+roastformer_data_20251111_092727/
+roastformer_data*.zip
+roastformer_COMPLETE*.zip
+
+# Working docs (keep only presentation-ready docs)
+docs/ACTION_PLAN*.md
+docs/ADDITIVE_BUILDER_GUIDE.md
+docs/CELL_10*.md
+docs/COLAB_*.md
+docs/COMPLETE_DEBUGGING_JOURNEY.md
+docs/CRITICAL_FINDING*.md
+docs/CRITICAL_FIX*.md
+docs/RUBRIC_COURSE_MAPPING.md
+docs/METHODOLOGY_COURSE_CONNECTIONS.md
+docs/EVALUATION_CHECKLIST.md
+docs/FEATURE_EXTRACTION_GUIDE.md
+docs/ARCHITECTURE_QUICK_REFERENCE.md
+docs/PROJECT_SUMMARY_FOR_INSTRUCTOR.md
+
+# Keep these images but hide large screenshots
+onyx_data_scrape.png
+onyx_roast_profile.png
