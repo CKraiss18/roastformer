@@ -38,6 +38,22 @@
 
 ## 1. Problem Statement & Overview
 
+### Coffee Journey: Seed to Cup
+
+Understanding coffee roasting requires context of the complete coffee lifecycle:
+
+![Seed to Cup](seed-to-cup.jpg)
+*The coffee journey: **Harvest** (picking ripe cherries) → **Process** (removing fruit, drying beans) → **Roast** (developing flavor through heat) → **Cup** (brewing and enjoying). Roasting is the critical transformation where bean characteristics and roaster decisions combine to create final flavor.*
+
+**Harvest** → Farmers pick ripe coffee cherries
+**Process** → Fruit removed (washed/natural/honey methods)
+**Roast** → Green beans transformed through controlled heating ← **We are here**
+**Cup** → Brewed coffee consumed by drinkers
+
+Roasting is where green beans (which taste grassy and have no coffee flavor) are transformed through heat into the aromatic brown beans we recognize. This 10-15 minute process develops 800+ flavor compounds that determine what ends up in your cup.
+
+---
+
 ### The Real-World Problem
 
 **Coffee roasters spend 10-20 experimental roasts (~15 minutes each) per new coffee**, working from zero to find an optimal profile. This represents:
@@ -60,12 +76,25 @@ Roasters currently work from:
 
 This is a **domain-specific sequential generation problem** with interesting constraints:
 
+**Viewing Roast Profiles as Sequences of Tokens**:
+
+In course terminology, we can think of each temperature measurement at time t as a **"token"** in a sequence. Just as a word in a sentence depends on previous words, each temperature value depends on all previous temperatures—you can't suddenly jump from 300°F to 450°F, the sequence must follow physical laws. This makes roast profiles a natural fit for transformers:
+
+- **Token** = Temperature at time t (e.g., 426.2°F at second 0, 425.8°F at second 1, ...)
+- **Sequence** = Complete roast profile (400-1000 tokens per profile)
+- **Context** = All previous temperatures inform the next prediction
+- **Conditioning** = Bean characteristics and desired flavors guide the entire sequence
+
+Just as language models predict the next word given previous words, RoastFormer predicts the next temperature given previous temperatures.
+
+**Additional Constraints**:
+
 1. **Multi-modal conditioning**: Categorical (origin, process, variety) + continuous (altitude, density) + multi-hot (flavor notes)
 2. **Physics constraints**: Valid profiles must respect thermodynamics (monotonicity, bounded heating rates, smooth transitions)
 3. **Small data regime**: 144 samples from specialty roaster (tests generalization limits)
 4. **Evaluation challenge**: Standard metrics (RMSE) insufficient; need domain-specific validation
 
-**Why this matters**: Demonstrates transformer applicability beyond NLP/vision to **structured physical processes** with domain constraints.
+**Why this matters**: Demonstrates transformer applicability beyond NLP/vision to **structured physical processes** with domain constraints, where each time step can be viewed as a "token" with strong temporal dependencies.
 
 ---
 
@@ -491,9 +520,13 @@ We conducted 7 systematic experiments to validate design choices and understand 
 
 ## 5. Model & Data Cards
 
+*Rubric Requirements: • Model version/architecture is shown • Intended uses and licenses is outlined • Ethical/bias considerations are addressed*
+
 ### Model Card Summary
 
 **Full Details**: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md)
+
+**Model Version/Architecture** *(Rubric Required)*:
 
 | Attribute | Value |
 |-----------|-------|
@@ -505,21 +538,37 @@ We conducted 7 systematic experiments to validate design choices and understand 
 | **Novel Contribution** | Flavor-conditioned generation (+14% improvement) |
 | **Positional Encoding** | Sinusoidal (Vaswani et al. 2017) |
 
-**Intended Use**:
-- Generate starting roast profiles for new coffees
-- Explore "what-if" scenarios (different origins, processes, flavors)
-- Reduce experimentation time from 10-20 roasts to 2-3 refinements
+**Intended Uses and Licenses** *(Rubric Required)*:
 
-**Out-of-Scope**:
+**Intended Use**:
+- ✅ Generate starting roast profiles for new coffees
+- ✅ Explore "what-if" scenarios (different origins, processes, flavors)
+- ✅ Reduce experimentation time from 10-20 roasts to 2-3 refinements
+- ✅ Research and education in coffee science and ML applications
+
+**License**:
+- **Code**: MIT License (free to use, modify, distribute)
+- **Documentation**: CC BY-NC 4.0 (attribution required, non-commercial)
+- **Model Weights**: Available for research/education use
+
+**Out-of-Scope Uses**:
 - ❌ Production roasting without human validation (0% physics compliance)
 - ❌ Commodity coffee (trained on specialty-grade only)
 - ❌ Equipment outside 10-50 lb batch range (Loring S70 specific)
 
+**Ethical/Bias Considerations** *(Rubric Required)*:
+
 **Ethical Considerations**:
-- Data sourced from public profiles (Onyx Coffee Lab) with attribution
-- Model learns "Onyx's championship style" not general roasting
-- Requires expert validation before use (physics violations present)
-- Open source (MIT license) for research and education
+- ✅ Data sourced from public profiles (Onyx Coffee Lab) with full attribution
+- ⚠️ Model learns "Onyx's championship style" not general roasting practices
+- ⚠️ Requires expert validation before use (physics violations present)
+- ✅ Open source (MIT license) promotes transparency and reproducibility
+
+**Bias Considerations**:
+- **Single-roaster bias**: Model trained exclusively on Onyx data → may not generalize to other roasters' styles or equipment
+- **Geographic bias**: 48% African/Central American origins → underrepresents Asian coffees
+- **Roast level bias**: 72% light roasts → may generate poor dark roast profiles
+- **Equipment bias**: Loring S70 convection roaster only → patterns may not transfer to drum roasters
 
 ---
 
@@ -559,27 +608,27 @@ We conducted 7 systematic experiments to validate design choices and understand 
 
 ## 6. Critical Analysis
 
-### What We Learned: The Debugging Journey
+*Rubric Requirements: Answered one or more of the following questions: **What is the impact of this project?** | **What does it reveal or suggest?** | **What is the next step?***
 
-**The Normalization Discovery**:
+---
+
+### What does this project reveal or suggest? *(Rubric Question)*
+
+**Key Insight 1: The Normalization Discovery**
 
 Initial complete failure (all models predicting constant 16°F) led to systematic debugging that revealed a fundamental principle: networks need proper input/output scaling for gradient flow. The 27x convergence speedup after normalization wasn't just an optimization—it was the difference between complete failure and success.
 
-**Lesson**: Understanding why something fails teaches more than knowing it works. This debugging process demonstrated the importance of analyzing training dynamics, not just trying different hyperparameters.
+**What this reveals**: Understanding why something fails teaches more than knowing it works. This debugging process demonstrated the importance of analyzing training dynamics, not just trying different hyperparameters.
 
----
-
-**The d=256 Surprise**:
+**Key Insight 2: The d=256 Surprise**
 
 We predicted the 6.4M parameter model would overfit on 123 samples. It achieved the best results.
 
-**Why this matters**: Being experimentally wrong revealed that modern regularization techniques (dropout, weight decay, early stopping) combined with proper normalization enable large models to work in small-data regimes. Theoretical assumptions about overfitting were overturned by empirical evidence.
+**What this reveals**: Being experimentally wrong revealed that modern regularization techniques (dropout, weight decay, early stopping) combined with proper normalization enable large models to work in small-data regimes. Theoretical assumptions about overfitting were overturned by empirical evidence.
 
 **Lesson**: Run the experiment even when you "know" it won't work. Empirical validation beats assumptions.
 
----
-
-### What It Reveals: The Limits of Post-Processing
+**Key Insight 3: The Limits of Post-Processing**
 
 **Attempted Solution: Physics-Constrained Generation**
 
@@ -603,11 +652,11 @@ The constraints fought against the model's learned behavior. During training wit
 
 **Root Cause**: Post-processing cannot fix training issues. The model was trained to mimic training sequences (with teacher forcing), not to generate physically valid sequences independently.
 
-**What We Learned**: Solutions must address the root cause—the training process—not the symptoms. Attempting to "fix" generation output reveals fundamental misunderstanding of where the problem originates.
+**What this reveals**: Solutions must address the root cause—the training process—not the symptoms. Attempting to "fix" generation output reveals fundamental misunderstanding of where the problem originates.
 
 ---
 
-### Next Steps: Proper Solutions
+### What is the next step? *(Rubric Question)*
 
 Based on this analysis and literature review, proper solutions require training-time fixes:
 
@@ -640,7 +689,7 @@ Based on this analysis and literature review, proper solutions require training-
 
 ---
 
-### Impact & Broader Implications
+### What is the impact of this project? *(Rubric Question)*
 
 **For Specialty Coffee**:
 - Demonstrates feasibility of data-driven profile generation
