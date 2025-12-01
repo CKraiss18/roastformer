@@ -40,110 +40,50 @@
 
 ### Coffee Journey: Seed to Cup
 
-Understanding coffee roasting requires context of the complete coffee lifecycle:
-
 ![Seed to Cup](seed-to-cup.jpeg)
-*The coffee journey: **Harvest** (picking ripe cherries) → **Process** (removing fruit, drying beans) → **Roast** (developing flavor through heat) → **Cup** (brewing and enjoying). Roasting is the critical transformation where bean characteristics and roaster decisions combine to create final flavor.*
-
-**Harvest** → Farmers pick ripe coffee cherries
-**Process** → Fruit removed (washed/natural/honey methods)
-**Roast** → Green beans transformed through controlled heating ← **We are here**
-**Cup** → Brewed coffee consumed by drinkers
-
-Roasting is where green beans (which taste grassy and have no coffee flavor) are transformed through heat into the aromatic brown beans we recognize. This 10-15 minute process develops 800+ flavor compounds that determine what ends up in your cup.
+*Roasting transforms green beans into aromatic coffee through controlled heating, developing 800+ flavor compounds. This critical 10-15 minute process determines final cup quality.*
 
 ---
 
 ### The Real-World Problem
 
-**Coffee roasters spend 10-20 experimental roasts (~15 minutes each) per new coffee**, working from zero to find an optimal profile. This represents:
-- **2-3 hours of experimentation** per new coffee
-- **$200+ in wasted beans and labor** per coffee introduction
-- **Inconsistent results** for new or less experienced roasters
-- **No data-driven guidance** for starting profiles
+**Coffee roasters spend 10-20 experimental roasts (~15 minutes each) per new coffee** to find an optimal profile—representing **2-3 hours and $200+ in wasted beans and labor** per coffee introduction.
 
-Roasters currently work from:
-- Personal experience and intuition
-- Simple curve templates (linear, convex, concave)
-- Trial-and-error adjustments
-- Generic origin-based rules of thumb
-
-**The Gap**: No generative model exists for creating roast profiles conditioned on sensory outcomes (desired flavors).
+Current methods rely on intuition, simple templates, and trial-and-error with no data-driven guidance for starting profiles conditioned on desired flavors.
 
 ---
 
 ### Why Transformers for Coffee Roasting?
 
-This is a **domain-specific sequential generation problem** with interesting constraints:
+Coffee roasting is a **sequential generation problem** where each temperature measurement is a **"token"** in a sequence. Like language models predicting the next word, RoastFormer predicts the next temperature given previous temperatures—but with physical constraints:
 
-**Viewing Roast Profiles as Sequences of Tokens**:
+- **Token** = Temperature at time t (e.g., 426.2°F → 425.8°F → ...)
+- **Sequence** = 400-1000 temperature tokens per profile
+- **Context** = All previous temperatures inform next prediction
+- **Conditioning** = Bean characteristics + desired flavors guide generation
 
-In course terminology, we can think of each temperature measurement at time t as a **"token"** in a sequence. Just as a word in a sentence depends on previous words, each temperature value depends on all previous temperatures—you can't suddenly jump from 300°F to 450°F, the sequence must follow physical laws. This makes roast profiles a natural fit for transformers:
-
-- **Token** = Temperature at time t (e.g., 426.2°F at second 0, 425.8°F at second 1, ...)
-- **Sequence** = Complete roast profile (400-1000 tokens per profile)
-- **Context** = All previous temperatures inform the next prediction
-- **Conditioning** = Bean characteristics and desired flavors guide the entire sequence
-
-Just as language models predict the next word given previous words, RoastFormer predicts the next temperature given previous temperatures.
-
-**Additional Constraints**:
-
-1. **Multi-modal conditioning**: Categorical (origin, process, variety) + continuous (altitude, density) + multi-hot (flavor notes)
-2. **Physics constraints**: Valid profiles must respect thermodynamics (monotonicity, bounded heating rates, smooth transitions)
-3. **Small data regime**: 144 samples from specialty roaster (tests generalization limits)
-4. **Evaluation challenge**: Standard metrics (RMSE) insufficient; need domain-specific validation
-
-**Why this matters**: Demonstrates transformer applicability beyond NLP/vision to **structured physical processes** with domain constraints, where each time step can be viewed as a "token" with strong temporal dependencies.
+**Key constraints**: Multi-modal features (categorical + continuous + multi-hot), physics laws (monotonicity, bounded heating rates), small data (144 samples), domain-specific evaluation beyond RMSE.
 
 ---
 
 ### Novel Contribution: Flavor-Conditioned Generation
 
-**The Idea**: Desired flavor outcomes (e.g., "berries", "chocolate", "floral") should guide roast profile generation, as flavor development is the ultimate goal of roasting.
-
-**Why this is novel**:
-- ❌ No existing roast profile generation work conditions on sensory outcomes
-- ❌ Most work uses only bean metadata (origin, altitude) or target roast level
-- ✅ Flavors represent the **goal** (what roaster wants to taste), not just **inputs** (what beans are)
-
-**Validation**: Ablation study showed **14% performance improvement** (23.4°F vs 27.2°F RMSE) when conditioning on flavor features versus baseline.
+**First transformer model to condition roast profile generation on desired flavor outcomes** (e.g., "berries", "chocolate", "floral"). Validated with **+14% performance improvement** over no-flavor baseline.
 
 ---
 
 ### Data Sourcing: Web Scraping Onyx Coffee Lab
 
-**Source**: [Onyx Coffee Lab](https://onyxcoffeelab.com) - 2019 US Roaster Champions, specialty coffee pioneer
+![Onyx Scraping](onyx_data_scrape.png)
+*Web scraping process: Collected profiles from Onyx Coffee Lab website over 8 scraping sessions (Oct 30 - Nov 10, 2025)*
 
-**Collection Methodology**:
-- **Automated web scraping** (October-November 2025)
-- **Public roast profiles** from product pages
-- **Batch tracking system** prevents duplicates (SHA256 hashing)
-- **Ethical collection**: Public data, rate-limited, full attribution
+![Profile Example](onyx_roast_profile.png)
+*Example scraped profile showing temperature curve and rate-of-rise (RoR)*
 
-**What We Scraped** (see screenshot below):
-
-![Onyx Data Scrape Example](onyx_data_scrape.png)
-*Example product page showing metadata available for each coffee: origin, process, variety, altitude, flavor notes, and roast level*
-
-**Roast Profile Data** (see screenshot below):
-
-![Onyx Roast Profile Example](onyx_roast_profile.png)
-*Example roast profile showing temperature curve (bean temp) and Rate of Rise (RoR) at 1-second resolution. This is the time-series data our model learns to generate.*
-
-**Dataset Characteristics**:
-- **144 profiles** total (123 train, 21 validation)
-- **1-second resolution** (400-1000 time steps per profile)
-- **Duration**: 7-16 minutes (mean 11.2 min)
-- **Geographic coverage**: 20+ coffee origins (Ethiopia 29%, Colombia 19%)
-- **Roast styles**: 72% light, 23% medium, 5% dark (championship-level specialty)
-- **Equipment**: Loring S70 Peregrine (convection roaster)
-
-**Data Integrity**:
-- 100% temperature data completeness
-- 95% altitude coverage (25% imputed via origin averages)
-- 100% flavor notes (2-8 flavors per profile, 40 unique)
-- Physics validation: All profiles pass temperature range, duration, and smoothness checks
+Built custom scraper with **additive batch tracking** (no duplicates across runs):
+- 8 scraping sessions → 159 files → **144 unique profiles** (123 train, 21 val)
+- Source: [Onyx Coffee Lab](https://onyxcoffeelab.com) (2019 US Roaster Champions)
+- Data: 1-second resolution temperature sequences + metadata (origin, process, variety, altitude, flavors)
 
 ---
 
