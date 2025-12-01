@@ -95,77 +95,33 @@ Built custom scraper with **additive batch tracking** (no duplicates across runs
 
 We chose a decoder-only architecture because roast profiles exhibit unidirectional causality—temperature at time t+1 depends on temperatures at t, t-1, and earlier, but not future time steps. This matches the causal structure of the physical roasting process.
 
-**Model Specifications**:
-```
-RoastFormer (Best Configuration: d=256)
-├── Layers: 6 transformer decoder blocks
-├── Hidden dimension (d_model): 256
-├── Attention heads: 8
-├── Feed-forward dimension: 1024 (4x d_model)
-├── Total parameters: 6,376,673
-├── Positional encoding: Sinusoidal (Vaswani et al. 2017)
-├── Dropout: 0.1
-└── Weight decay: 0.01
-```
-
-The model generates temperature sequences autoregressively: at each time step, it predicts the next temperature given all previous temperatures and the conditioning features. Causal masking ensures the model cannot attend to future time steps during training, maintaining the sequential dependency structure.
+**Best Configuration (d=256)**:
+- 6 layers, 256 hidden dim, 8 heads
+- 6.4M parameters total
+- Sinusoidal positional encoding
+- Dropout: 0.1, Weight decay: 0.01
 
 ---
 
 ### Normalization: The Critical Discovery
 
-**Initial Failure**: All 10 initial models completely failed, predicting a constant 16°F regardless of input.
+**Initial Failure**: All models predicted constant 16°F.
 
-**Root Cause Analysis**:
-After systematic debugging (trying smaller models, lower learning rates, different optimizers), we analyzed the training dynamics and discovered a fundamental scale mismatch:
+**Root Cause**: Networks output ~0-10 scale, we asked for 150-450°F temperatures → gradients exploded/vanished.
 
-- Neural networks naturally output values near their initialization scale (~0-10)
-- We asked the network to predict raw temperatures (150-450°F)
-- Result: Gradients exploded or vanished, preventing any learning
+**Solution**: Normalize temperatures to [0,1] range → **27x faster convergence**. All models succeeded after normalization.
 
-**Solution**: Normalize temperatures to [0, 1] range:
-```python
-temp_normalized = (temp - temp.min()) / (temp.max() - temp.min())
-```
-
-**Impact**: **27x faster convergence**. All models succeeded after normalization.
-
-**Fundamental Principle**: This demonstrates that proper input/output scaling isn't an optimization trick—it's essential for gradient flow in neural networks. The network's natural output scale must match the target scale for effective learning.
+**Lesson**: Proper input/output scaling is essential for gradient flow, not optional optimization.
 
 ---
 
 ### Multi-Modal Conditioning Architecture
 
-The model conditions generation on 17 features across three modalities:
+The model conditions on **17 features** across three modalities:
 
-**1. Categorical Features (5)** - Learned embeddings (32-dim each):
-- Origin (20 classes: Ethiopia, Colombia, Guatemala, Kenya, etc.)
-- Process (6 classes: Washed, Natural, Honey, Anaerobic, Experimental)
-- Variety (15 classes: Heirloom, Caturra, Bourbon, SL-28, etc.)
-- Roast Level (4 classes: Expressive Light, Balanced, Medium, Dark)
-- **Flavor Notes (40 unique)** - Multi-hot encoded (2-8 per profile), projected to 32-dim
+**Categorical (5)**: Origin (20 classes), Process (6), Variety (15), Roast Level (4), **Flavors (40 unique, multi-hot)**
 
-**2. Continuous Features (4)** - Normalized, linearly projected:
-- Target Finish Temperature (390-430°F)
-- Altitude (1000-2300 MASL)
-- Bean Density Proxy (origin-based estimation)
-- Caffeine Content (variety-based estimation)
-
-**Conditioning Mechanism**:
-```python
-# Multi-modal fusion
-categorical_embeds = concat([embed_origin, embed_process, 
-                             embed_variety, embed_roast_level, 
-                             embed_flavors])  # 5 × 32-dim = 160-dim
-
-continuous_projected = linear(continuous_features)  # 4 → 32-dim
-
-condition_vector = concat([categorical_embeds, 
-                          continuous_projected])  # 192-dim unified
-
-# Cross-attention in each decoder layer
-output = self_attention(temp_seq) + cross_attention(temp_seq, condition_vector)
-```
+**Continuous (4)**: Target finish temp, Altitude, Bean density, Caffeine content
 
 The cross-attention mechanism allows the model to selectively attend to different conditioning features at each time step, learning which bean characteristics and flavor targets are relevant for predicting each temperature value.
 
@@ -173,122 +129,78 @@ The cross-attention mechanism allows the model to selectively attend to differen
 
 ### Positional Encoding: Empirical Comparison
 
-We systematically compared three positional encoding methods to understand their effectiveness on small sequential data:
-
 | Method | Val RMSE | Notes |
 |--------|----------|-------|
-| **Sinusoidal** (Vaswani et al. 2017) | **23.4°F** ✅ | Classic "Attention is All You Need" |
-| RoPE (Su et al. 2021) | 28.1°F | Rotary position embeddings |
+| **Sinusoidal** | **23.4°F** ✅ | Classic method (Vaswani 2017) |
+| RoPE | 28.1°F | Rotary embeddings |
 | Learned | 43.8°F | Overfits on 144 samples |
 
-**Surprising Result**: Sinusoidal encodings (the original, simpler method) outperformed RoPE (rotary position embeddings, a more recent advancement) on our small dataset.
+**Motivation**: Tested RoPE (Rotary Position Embeddings) based on my in-class paper presentation—curious whether rotating positions would help with time series prediction where temporal order is critical.
 
-**Analysis**: RoPE's rotational properties and relative position encoding offer advantages on large datasets and long sequences, but sinusoidal encodings' fixed, deterministic patterns generalize better with limited data. This demonstrates that architectural complexity doesn't guarantee better performance in small-data regimes—simpler, well-understood methods can be more robust.
+**Finding**: Simpler sinusoidal encodings outperformed RoPE on small data—deterministic patterns generalize better than learned or rotational methods in limited-data regimes.
 
 ---
 
 ### Flavor Conditioning: Validating the Novel Contribution
 
-To validate that flavor features meaningfully improve generation quality, we conducted an ablation study:
-
 | Configuration | Val RMSE | Improvement |
 |---------------|----------|-------------|
-| Without flavor features | 27.2°F | Baseline |
-| **With flavor features** | **23.4°F** | **+14% better** ✅ |
-
-**Statistical Significance**: 3.8°F improvement on 21-sample validation set (p<0.05 via paired t-test)
+| Without flavors | 27.2°F | Baseline |
+| **With flavors** | **23.4°F** | **+14% better** ✅ |
 
 **What the Model Learns**: By conditioning on flavor notes like "berries", "chocolate", "floral", the model learns associations between temperature trajectories and sensory outcomes. For example:
 - Berry flavors → certain development patterns (specific RoR curves)
 - Chocolate notes → different temperature progressions
 - Floral characteristics → distinct heating profiles
 
-This demonstrates that **task-relevant conditioning** (flavors as roaster goals) improves generation quality beyond just bean metadata.
+This validates that **task-relevant conditioning** improves generation beyond just bean metadata.
 
 ---
 
 ### Small-Data Strategies: Challenging the Overfitting Hypothesis
 
-**Initial Hypothesis**: "A model with 6.4M parameters will overfit on 123 training samples."
+**Hypothesis**: "6.4M parameters will overfit on 123 samples."
 
-**Experiment**: Systematic model size ablation with proper regularization
+| d_model | Params | Val RMSE | Params/Sample |
+|---------|--------|----------|---------------|
+| 32 | 203K | 43.8°F | 1,650:1 |
+| 64 | 606K | 23.4°F | 4,925:1 |
+| 128 | 2.0M | 16.5°F | 16,625:1 |
+| **256** | **6.4M** | **10.4°F** ✅ | **51,843:1** |
 
-| Model | d_model | Params | Val RMSE | Params/Sample |
-|-------|---------|--------|----------|---------------|
-| Small | 32 | 202,945 | 43.8°F | 1,650:1 |
-| Medium-S | 64 | 605,633 | 23.4°F | 4,925:1 |
-| Medium | 128 | 2,044,545 | 16.5°F | 16,625:1 |
-| **Large** | **256** | **6,376,673** | **10.4°F** ✅ | **51,843:1** |
-
-**Surprising Result**: The largest model achieved **best performance** despite a 51,843:1 parameter-to-sample ratio!
-
-**Why the Hypothesis Was Wrong**:
-1. **Normalization was fundamental** - With proper scaling, all models could learn
-2. **Modern regularization is powerful** - Dropout (0.1) + weight decay (0.01) + early stopping (patience=20) prevented overfitting
-3. **Capacity enables complexity** - Larger models better capture roast dynamics (drying dip, Maillard acceleration, development phase transitions)
-
-**Training Configuration**:
-- Optimizer: AdamW (β₁=0.9, β₂=0.999, weight_decay=0.01)
-- Learning rate: 1e-4 with CosineAnnealingLR (T_max=100)
-- Loss: MSE (Mean Squared Error)
-- Batch size: 16
-- Gradient clipping: 1.0
-- Early stopping: Patience=20 epochs
-
-**Lesson**: Being experimentally wrong taught more than being theoretically correct. Empirical validation revealed that **normalization + proper regularization > capacity concerns** in the small-data regime.
+**Result**: Largest model won! With normalization + regularization (dropout 0.1, weight decay 0.01, early stopping), capacity enables learning complex roast dynamics. Being experimentally wrong taught more than theory.
 
 ---
 
 ### Autoregressive Generation & Exposure Bias
 
-The model generates profiles autoregressively: predict temperature at t+1 given temperatures 0...t and conditioning features. During training, we use **teacher forcing**—the model sees real previous temperatures from the training data.
+**Challenge**: Model trained with teacher forcing (sees real temps) struggles generating independently (sees own predictions → errors compound).
 
-**Challenge Discovered**: This creates a **train-generation gap**:
+**Evidence**: Training RMSE 10.4°F | Generation MAE 25.3°F (**2.4x degradation**)
 
-- **During training**: Model sees real previous temperatures → learns temperature patterns ✅
-- **During generation**: Model sees own predictions → errors compound → physics violations ❌
+**Physics Compliance Failures**:
 
-**Evidence**:
-- Training RMSE: 10.4°F (with teacher forcing)
-- Generation MAE: 25.3°F (autoregressive)
-- **2.4x performance degradation**
+What roast profiles **must follow**:
+- ✅ **Monotonicity**: Temperature only increases after turning point (no cooling mid-roast)
+- ✅ **Bounded heating rate**: 20-100°F/min (no scorching or baking)
+- ✅ **Smooth transitions**: No sudden jumps (equipment limitation)
 
-**Physics Compliance**:
-- Monotonicity (post-turning point): 0.0% ❌
-- Bounded RoR (20-100°F/min): 28.8% ⚠️
-- Smooth transitions (<10°F/s): 98.7% ✅
-- Overall physics valid: 0.0% ❌
+What our model **achieved**:
+- ❌ Monotonicity: **0%** (profiles cool mid-roast—physically impossible)
+- ⚠️ Bounded RoR: **28.8%** (heating rates too fast/slow)
+- ✅ Smooth: **98.7%** (respected equipment constraints)
 
-This is the classic **exposure bias problem** in sequence generation: models trained with teacher forcing aren't exposed to their own prediction errors during training, so they struggle when generating independently.
-
-**Proper Solutions** (identified from literature):
-- Scheduled sampling (Bengio et al., 2015): Gradually transition from teacher forcing to model predictions during training
-- Professor forcing: Mix real and generated sequences during training
-- Curriculum learning: Start with teacher forcing, progressively increase exposure to model predictions
+This is **exposure bias**—models not exposed to their own errors during training fail when generating autonomously.
 
 ---
 
 ### Domain-Specific Evaluation: Beyond Generic Metrics
 
-Standard regression metrics (RMSE, MAE) provided an incomplete picture:
+**Generic metrics** (misleading): Training RMSE 10.4°F ✅, Generation MAE 25.3°F ⚠️
 
-**Generic Metrics** (misleading):
-- Training RMSE: 10.4°F ✅ "Excellent!"
-- Generation MAE: 25.3°F ⚠️ "Reasonable?"
+**Domain metrics** (revealing): Monotonicity 0% ❌, Bounded RoR 28.8% ⚠️, Smooth transitions 98.7% ✅
 
-These metrics measure temperature accuracy but miss **physical validity**. A profile with 25°F average error might still be usable—if it respects roasting physics.
-
-**Domain-Specific Metrics** (revealing):
-- Monotonicity: 0% ❌ (profiles cool mid-roast—physically impossible)
-- Bounded RoR: 28.8% ⚠️ (heating rates outside 20-100°F/min)
-- Smooth transitions: 98.7% ✅ (no sudden jumps—equipment limitation respected)
-
-**Key Insight**: Generic metrics said "model works reasonably," but physics metrics revealed "generated profiles are invalid." This demonstrates that domain applications require domain-specific validation—understanding the physical constraints of the problem is essential for proper evaluation.
-
-We defined physics metrics based on roasting expertise:
-- Monotonic heating after turning point (no cooling mid-roast)
-- Bounded heating rates (no scorching >100°F/min or baking <20°F/min)
-- Smooth transitions (equipment can't change temperature instantly)
+**Insight**: Standard metrics said "reasonable," physics metrics revealed "invalid profiles." Domain applications require domain-specific validation—understanding physical constraints is essential for proper evaluation.
 
 ---
 
