@@ -42,7 +42,7 @@
 
 Understanding coffee roasting requires context of the complete coffee lifecycle:
 
-![Seed to Cup](seed-to-cup.jpg)
+![Seed to Cup](seed-to-cup.jpeg)
 *The coffee journey: **Harvest** (picking ripe cherries) → **Process** (removing fruit, drying beans) → **Roast** (developing flavor through heat) → **Cup** (brewing and enjoying). Roasting is the critical transformation where bean characteristics and roaster decisions combine to create final flavor.*
 
 **Harvest** → Farmers pick ripe coffee cherries
