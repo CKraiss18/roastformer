@@ -55,7 +55,7 @@ Current methods rely on intuition, simple templates, and trial-and-error with no
 
 ### Why Transformers for Coffee Roasting?
 
-Coffee roasting is a **sequential generation problem** where each temperature measurement is a **"token"** in a sequence. Like language models predicting the next word, RoastFormer predicts the next temperature given previous temperatures—but with physical constraints:
+Coffee roasting is a **sequential generation problem** where each temperature measurement (and its rate-of-rise) is a **"token"** in a sequence. Like language models predicting the next word, RoastFormer predicts the next temperature given previous temperatures—generating complete roast profiles including temperature curves and RoR patterns—but with physical constraints:
 
 - **Token** = Temperature at time t (e.g., 426.2°F → 425.8°F → ...)
 - **Sequence** = 400-1000 temperature tokens per profile
@@ -74,16 +74,16 @@ Coffee roasting is a **sequential generation problem** where each temperature me
 
 ### Data Sourcing: Web Scraping Onyx Coffee Lab
 
+Built custom scraper with **additive batch tracking** (no duplicates across runs):
+- 8 scraping sessions → 159 files → **144 unique profiles** (123 train, 21 val)
+- Source: [Onyx Coffee Lab](https://onyxcoffeelab.com) (2019 US Roaster Champions)
+- Data: 1-second resolution **temperature sequences + rate-of-rise (RoR)** + metadata (origin, process, variety, altitude, flavors)
+
 ![Onyx Scraping](onyx_data_scrape.png)
 *Web scraping process: Collected profiles from Onyx Coffee Lab website over 8 scraping sessions (Oct 30 - Nov 10, 2025)*
 
 ![Profile Example](onyx_roast_profile.png)
 *Example scraped profile showing temperature curve and rate-of-rise (RoR)*
-
-Built custom scraper with **additive batch tracking** (no duplicates across runs):
-- 8 scraping sessions → 159 files → **144 unique profiles** (123 train, 21 val)
-- Source: [Onyx Coffee Lab](https://onyxcoffeelab.com) (2019 US Roaster Champions)
-- Data: 1-second resolution temperature sequences + metadata (origin, process, variety, altitude, flavors)
 
 ---
 
@@ -100,18 +100,6 @@ We chose a decoder-only architecture because roast profiles exhibit unidirection
 - 6.4M parameters total
 - Sinusoidal positional encoding
 - Dropout: 0.1, Weight decay: 0.01
-
----
-
-### Normalization: The Critical Discovery
-
-**Initial Failure**: All models predicted constant 16°F.
-
-**Root Cause**: Networks output ~0-10 scale, we asked for 150-450°F temperatures → gradients exploded/vanished.
-
-**Solution**: Normalize temperatures to [0,1] range → **27x faster convergence**. All models succeeded after normalization.
-
-**Lesson**: Proper input/output scaling is essential for gradient flow, not optional optimization.
 
 ---
 
@@ -174,7 +162,7 @@ This validates that **task-relevant conditioning** improves generation beyond ju
 
 ### Autoregressive Generation & Exposure Bias
 
-**Challenge**: Model trained with teacher forcing (sees real temps) struggles generating independently (sees own predictions → errors compound).
+**Challenge**: We initially attempted traditional autoregressive generation (model sees its own predictions during training), but errors exploded as mistakes compounded. We opted for **teacher forcing**—training where the model sees real temperatures—but this creates exposure bias: model trained on real temps struggles generating independently when it must rely on its own predictions.
 
 **Evidence**: Training RMSE 10.4°F | Generation MAE 25.3°F (**2.4x degradation**)
 
@@ -201,6 +189,18 @@ This is **exposure bias**—models not exposed to their own errors during traini
 **Domain metrics** (revealing): Monotonicity 0% ❌, Bounded RoR 28.8% ⚠️, Smooth transitions 98.7% ✅
 
 **Insight**: Standard metrics said "reasonable," physics metrics revealed "invalid profiles." Domain applications require domain-specific validation—understanding physical constraints is essential for proper evaluation.
+
+---
+
+### Normalization: The Critical Discovery
+
+**Initial Failure**: All models predicted constant 16°F.
+
+**Root Cause**: Networks output ~0-10 scale, we asked for 150-450°F temperatures → gradients exploded/vanished.
+
+**Solution**: Normalize temperatures to [0,1] range → **27x faster convergence**. All models succeeded after normalization.
+
+**Lesson**: Proper input/output scaling is essential for gradient flow, not optional optimization.
 
 ---
 
@@ -443,11 +443,27 @@ Proper solutions require training-time fixes:
 - Shows importance of domain-specific evaluation (physics vs generic metrics)
 - Provides instructive example of exposure bias in real application
 
-**For AI Education**:
-- Complete documentation of debugging process (normalization discovery)
-- Honest reporting of failures (constrained generation)
-- Systematic ablation studies (7 experiments)
-- Clear connection between theory and practice
+---
+
+### Lessons Learned
+
+While RoastFormer isn't production-ready (0% physics compliance), that was never the point. This project demonstrates **proof-of-concept feasibility** and validates the core approach:
+
+**What Worked**:
+- Flavor conditioning improves performance (+14%)—validating the novel contribution
+- Large models can succeed in small-data regimes with proper techniques (normalization, regularization, early stopping)
+- Systematic debugging (normalization discovery) taught more than immediate success
+- Domain-specific evaluation revealed limitations that generic metrics missed
+
+**What We Learned**:
+- Post-processing constraints cannot fix training-time issues—physics violations require training-time solutions (scheduled sampling, physics-informed losses)
+- Exposure bias is a real challenge requiring architectural solutions, not band-aids
+- Honest reporting of failures has research value—constrained generation's 4.5x degradation guides future work
+- Small datasets amplify architectural choices—every design decision matters at 144 samples
+
+**Path Forward**: Clear, literature-backed solutions exist (scheduled sampling, multi-roaster datasets, physics-informed losses). This work identifies both feasibility and specific obstacles, providing a foundation for practical implementation.
+
+**Bottom line**: The value isn't in a perfect model—it's in systematic exploration, validated novel contributions, honest reporting, and clear next steps grounded in research literature.
 
 ---
 
