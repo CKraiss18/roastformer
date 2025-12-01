@@ -255,14 +255,14 @@ is_valid = validate_physics(profile)
 
 ### Interactive Notebooks
 
-**Training Suite** (with Colab outputs): [`RoastFormer_Training_Suite_COMPREHENSIVE.ipynb`](RoastFormer_Training_Suite_COMPREHENSIVE.ipynb)
+**Training Suite** (with Colab outputs): [`RoastFormer_Training_Suite_COMPREHENSIVE.ipynb`](RoastFormer_Training_Suite_COMPREHENSIVE.ipynb) | [📓 Run in Colab](https://drive.google.com/file/d/11qVKQrYxjdWFmivMjXScemKu2zJfEj1q/view?usp=sharing)
 - Complete training experiments (7 ablations)
 - Model size comparison (d=32, 64, 128, 256)
 - Positional encoding ablation (sinusoidal, RoPE, learned)
 - Flavor conditioning validation
 - All cells executed with outputs visible
 
-**Evaluation Demo** (with Colab outputs): [`RoastFormer_Evaluation_Demo_COMPLETE.ipynb`](RoastFormer_Evaluation_Demo_COMPLETE.ipynb)
+**Evaluation Demo** (with Colab outputs): [`RoastFormer_Evaluation_Demo_COMPLETE.ipynb`](RoastFormer_Evaluation_Demo_COMPLETE.ipynb) | [📓 Run in Colab](https://drive.google.com/file/d/1xLEXx-F_WfiaDJQmqWs-eW9LVt2WabG3/view?usp=sharing)
 - Generate profiles from validation set
 - Compute evaluation metrics
 - Visualize real vs generated comparisons
@@ -302,12 +302,10 @@ We conducted 7 systematic experiments to validate design choices and understand 
 
 ### Evaluation Results: Generation Quality & Challenges
 
-**Real vs Generated Profiles**:
-
 ![Real vs Generated Comparison](roastformer_EVALUATION_20251120_170612/real_vs_generated_profiles.png)
-*Comparison of 6 validation samples: real profiles (blue) vs generated profiles (orange). Generated profiles follow overall trajectory but exhibit physics violations (non-monotonic segments).*
+*Real (blue) vs generated (orange). Profiles follow trajectory but exhibit physics violations.*
 
-**Quantitative Metrics** (10 validation samples):
+**Quantitative Metrics**:
 
 | Metric | Value | Assessment |
 |--------|-------|------------|
@@ -316,7 +314,7 @@ We conducted 7 systematic experiments to validate design choices and understand 
 | **Finish Temp MAE** | 13.95°F | Decent endpoint accuracy |
 | **Finish Temp (±10°F)** | 50% | Half within tolerance |
 
-**Physics Compliance** (reveals challenge):
+**Physics Compliance**:
 
 | Constraint | Value | Status |
 |------------|-------|--------|
@@ -325,102 +323,47 @@ We conducted 7 systematic experiments to validate design choices and understand 
 | **Smooth Transitions** | 98.7% | ✅ Good |
 | **Overall Valid** | 0.0% | ❌ None pass |
 
-**Analysis**: While temperature accuracy is reasonable (25°F MAE), generated profiles violate physical constraints. This identifies **autoregressive exposure bias** as the core challenge—model trained with teacher forcing struggles when generating independently.
+**Analysis**: Temperature accuracy reasonable (25°F MAE), but physics violations reveal autoregressive exposure bias.
 
 ---
 
 ### Detailed Profile Analysis
 
 ![Detailed Comparison](roastformer_EVALUATION_20251120_170612/detailed_comparison.png)
-*Detailed view of a single profile showing temperature trajectory (top) and Rate of Rise (bottom). Generated profile (orange) follows general shape but lacks proper turning point physics.*
-
-**Observations**:
-- ✅ Overall trajectory shape captured
-- ✅ Start and finish temperatures reasonable
-- ❌ Turning point dynamics incorrect (should dip, then recover)
-- ❌ RoR pattern unrealistic (should show characteristic phases)
-- ❌ Non-monotonic segments mid-roast (physically impossible)
+*Detailed view showing temperature and RoR. Model captures shape but violates turning point physics.*
 
 ---
 
 ### Example Use Cases: Diverse Coffee Profiles
 
 ![Example Use Cases](roastformer_EVALUATION_20251120_170612/example_use_cases.png)
-*Four diverse generation examples: Ethiopian light roast (berry/floral), Colombian medium (chocolate/nutty), Kenyan bright (citrus/winey), and Guatemala balanced. Model generates distinct profiles for different bean characteristics and flavor targets.*
-
-**Diversity Analysis**:
-- Different origins → different temperature progressions
-- Flavor targets influence RoR patterns  
-- Roast levels affect finish temperature and development time
-- Model learned meaningful bean characteristic associations
-
----
-
-### Interactive Demo Results
-
-![Demo Profile](roastformer_EVALUATION_20251120_170612/demo_profile.png)
-*Custom profile generated for Ethiopian washed coffee targeting "berries, floral, citrus" at 395°F finish. Shows temperature curve, RoR, and key roast phases. Despite physics violations, demonstrates controllable generation from user specifications.*
-
-**Demo Features**:
-- User specifies all conditioning features
-- Model generates complete profile in <1 second
-- Visualization shows temp + RoR curves
-- Metrics computed automatically
-- Physics validation provides feedback
+*Diverse profiles: Ethiopian (berry/floral), Colombian (chocolate), Kenyan (citrus), Guatemala (balanced). Different origins → distinct temperature progressions.*
 
 ---
 
 ## 5. Model & Data Cards
 
-*Rubric Requirements: • Model version/architecture is shown • Intended uses and licenses is outlined • Ethical/bias considerations are addressed*
-
 ### Model Card Summary
 
 **Full Details**: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md)
 
-**Model Version/Architecture** *(Rubric Required)*:
+**Model Version & Architecture**:
+- RoastFormer v1.0, Decoder-only Transformer
+- 6.4M parameters (d=256, 6 layers, 8 heads)
+- Training: 144 Onyx profiles (123 train, 21 val)
+- Best RMSE: 10.4°F validation
+- Novel: Flavor-conditioned generation (+14%)
 
-| Attribute | Value |
-|-----------|-------|
-| **Model Name** | RoastFormer v1.0 |
-| **Architecture** | Decoder-only Transformer |
-| **Parameters** | 6,376,673 (d=256, 6 layers, 8 heads) |
-| **Training Data** | 144 Onyx profiles (123 train, 21 val) |
-| **Best RMSE** | 10.4°F (validation) |
-| **Novel Contribution** | Flavor-conditioned generation (+14% improvement) |
-| **Positional Encoding** | Sinusoidal (Vaswani et al. 2017) |
+**Intended Uses & License**:
+- ✅ Generate starting roast profiles, explore scenarios, reduce experimentation
+- ❌ NOT for production without validation (0% physics compliance)
+- **License**: MIT (code), CC BY-NC 4.0 (docs), Research/edu use (weights)
 
-**Intended Uses and Licenses** *(Rubric Required)*:
-
-**Intended Use**:
-- ✅ Generate starting roast profiles for new coffees
-- ✅ Explore "what-if" scenarios (different origins, processes, flavors)
-- ✅ Reduce experimentation time from 10-20 roasts to 2-3 refinements
-- ✅ Research and education in coffee science and ML applications
-
-**License**:
-- **Code**: MIT License (free to use, modify, distribute)
-- **Documentation**: CC BY-NC 4.0 (attribution required, non-commercial)
-- **Model Weights**: Available for research/education use
-
-**Out-of-Scope Uses**:
-- ❌ Production roasting without human validation (0% physics compliance)
-- ❌ Commodity coffee (trained on specialty-grade only)
-- ❌ Equipment outside 10-50 lb batch range (Loring S70 specific)
-
-**Ethical/Bias Considerations** *(Rubric Required)*:
-
-**Ethical Considerations**:
-- ✅ Data sourced from public profiles (Onyx Coffee Lab) with full attribution
-- ⚠️ Model learns "Onyx's championship style" not general roasting practices
-- ⚠️ Requires expert validation before use (physics violations present)
-- ✅ Open source (MIT license) promotes transparency and reproducibility
-
-**Bias Considerations**:
-- **Single-roaster bias**: Model trained exclusively on Onyx data → may not generalize to other roasters' styles or equipment
-- **Geographic bias**: 48% African/Central American origins → underrepresents Asian coffees
-- **Roast level bias**: 72% light roasts → may generate poor dark roast profiles
-- **Equipment bias**: Loring S70 convection roaster only → patterns may not transfer to drum roasters
+**Ethical & Bias Considerations**:
+- Single-roaster bias → learns Onyx style not general practices
+- Geographic bias → 48% African/Central American
+- Light roast bias → 72% light, may fail on dark roasts
+- Requires expert validation before use
 
 ---
 
@@ -428,120 +371,66 @@ We conducted 7 systematic experiments to validate design choices and understand 
 
 **Full Details**: [`docs/DATA_CARD.md`](docs/DATA_CARD.md)
 
-| Attribute | Value |
-|-----------|-------|
-| **Dataset** | Onyx Coffee Lab Roast Profiles |
-| **Size** | 144 profiles (123 train, 21 val) |
-| **Temporal Coverage** | October-November 2025 |
-| **Resolution** | 1-second intervals (400-1000 time steps) |
-| **Geographic Coverage** | 20+ origins (Ethiopia 29%, Colombia 19%) |
-| **Equipment** | Loring S70 Peregrine (convection roaster) |
-
-**Features Extracted**:
-- 5 categorical: origin, process, variety, roast level, flavors
-- 4 continuous: target temp, altitude, density, caffeine
-- 1 time-series: temperature sequence (1-second resolution)
+**Dataset**: 144 Onyx Coffee Lab profiles (Oct-Nov 2025, 1-sec resolution)
+- 20+ origins (Ethiopia 29%, Colombia 19%)
+- Loring S70 Peregrine roaster
+- Features: 5 categorical, 4 continuous, 1 time-series
 
 **Known Biases**:
-- **Single-roaster bias** (critical): All from Onyx → learns their "house style"
-- **Light roast bias**: 72% light, 23% medium, 5% dark
-- **Geographic bias**: African/Central American heavy (48%)
-- **Modern equipment**: Loring S70 only (no drum roasters)
+- Single-roaster (critical) → learns Onyx "house style"
+- Light roast heavy (72%)
+- Limited equipment diversity
 
-**Critical Limitation**: Even 500+ Onyx profiles wouldn't fix single-roaster bias. Need 10+ diverse roasters (different equipment, styles, regions) for true generalization.
-
-**Ethical Data Collection**:
-- ✅ Public data only (no login required)
-- ✅ Rate-limited scraping (respectful)
-- ✅ Full attribution to Onyx Coffee Lab
-- ✅ Research/education use (non-commercial)
+**Critical**: Even 500+ Onyx profiles won't fix single-roaster bias. Need 10+ diverse roasters for generalization.
 
 ---
 
 ## 6. Critical Analysis
 
-*Rubric Requirements: Answered one or more of the following questions: **What is the impact of this project?** | **What does it reveal or suggest?** | **What is the next step?***
-
----
-
-### What does this project reveal or suggest? *(Rubric Question)*
+### What does this project reveal or suggest?
 
 **Key Insight 1: The Normalization Discovery**
 
-Initial complete failure (all models predicting constant 16°F) led to systematic debugging that revealed a fundamental principle: networks need proper input/output scaling for gradient flow. The 27x convergence speedup after normalization wasn't just an optimization—it was the difference between complete failure and success.
+Initial failure (constant 16°F predictions) revealed: networks need proper input/output scaling for gradient flow. **27x convergence speedup** after normalization—difference between failure and success.
 
-**What this reveals**: Understanding why something fails teaches more than knowing it works. This debugging process demonstrated the importance of analyzing training dynamics, not just trying different hyperparameters.
+**What this reveals**: Understanding failures teaches more than successes. Systematic debugging beats hyperparameter tuning.
 
 **Key Insight 2: The d=256 Surprise**
 
-We predicted the 6.4M parameter model would overfit on 123 samples. It achieved the best results.
+Hypothesis: "6.4M parameters will overfit on 123 samples." Result: Best performance!
 
-**What this reveals**: Being experimentally wrong revealed that modern regularization techniques (dropout, weight decay, early stopping) combined with proper normalization enable large models to work in small-data regimes. Theoretical assumptions about overfitting were overturned by empirical evidence.
+**What this reveals**: Modern regularization (dropout, weight decay, early stopping) + normalization enable large models in small-data regimes. Empirical validation beats theoretical assumptions.
 
-**Lesson**: Run the experiment even when you "know" it won't work. Empirical validation beats assumptions.
-
-**Key Insight 3: The Limits of Post-Processing**
-
-**Attempted Solution: Physics-Constrained Generation**
-
-To address 0% physics compliance, we implemented physics constraints during generation:
+**Key Insight 3: Post-Processing Cannot Fix Training Issues**
 
 ![Constrained vs Unconstrained](roastformer_EVALUATION_20251120_170612/constrained_vs_unconstrained_comparison.png)
-*Comparison of unconstrained generation (left) vs physics-constrained generation (right). Constrained approach enforced monotonicity and bounded RoR but resulted in unrealistic linear ramps and 4.5x worse accuracy.*
+*Physics-constrained generation: enforced physics but 4.5x worse accuracy (linear ramps).*
 
-**Results**: FAILED
+Attempted fix: Enforce physics during generation → **FAILED** (MAE 25→114°F).
 
-| Metric | Unconstrained | Constrained | Change |
-|--------|---------------|-------------|--------|
-| **MAE** | 25.3°F | 113.6°F | **+88.3°F (4.5x worse)** ❌ |
-| **Finish Temp MAE** | 13.95°F | 86.67°F | **+72.7°F worse** ❌ |
-| **Monotonicity** | 0.0% | 100.0% | +100% ✅ |
-| **Bounded RoR** | 28.8% | 0.0% | **-28.8% (worse!)** ❌ |
+**Why**: Constraints fought model's learned behavior. Model trained with teacher forcing (sees real temps), not to generate physically valid sequences.
 
-**Why It Failed**:
-
-The constraints fought against the model's learned behavior. During training with teacher forcing, the model learned temperature patterns that occasionally include non-monotonic segments, unbounded heating rates, and complex dynamics. Post-generation constraints tried to force physical behavior the model never learned, resulting in unnatural linear ramps instead of realistic curves.
-
-**Root Cause**: Post-processing cannot fix training issues. The model was trained to mimic training sequences (with teacher forcing), not to generate physically valid sequences independently.
-
-**What this reveals**: Solutions must address the root cause—the training process—not the symptoms. Attempting to "fix" generation output reveals fundamental misunderstanding of where the problem originates.
+**What this reveals**: Fix training, not symptoms. Post-processing can't solve training-time issues.
 
 ---
 
-### What is the next step? *(Rubric Question)*
+### What is the next step?
 
-Based on this analysis and literature review, proper solutions require training-time fixes:
+Proper solutions require training-time fixes:
 
-**1. Scheduled Sampling** (Bengio et al., 2015)
-- Gradually transition from teacher forcing to model predictions during training
-- Model learns to handle its own prediction errors
-- Addresses exposure bias at the source
+**1. Scheduled Sampling** (Bengio et al., 2015) - Gradually transition from teacher forcing to model predictions during training
 
-**2. Physics-Informed Loss Functions**
-- Add penalty terms for physics violations to training loss
-- Model learns constraints, not just patterns
-- Example: `loss = mse_loss + λ₁*monotonicity_penalty + λ₂*ror_penalty`
+**2. Physics-Informed Loss Functions** - Add penalties for physics violations: `loss = mse + λ*physics_penalty`
 
-**3. Multi-Roaster Dataset** (Most Critical!)
-- **Not just more Onyx data** - need 10+ diverse roasters
-- Equipment diversity: Loring, Probat, Diedrich, Giesen (drum), Sivetz (fluid bed)
-- Style diversity: Nordic light, traditional medium, French dark, espresso
-- Geographic diversity: US, Europe, Asia, Africa roasting cultures
-- **Key insight**: Diversity > scale. 200 profiles from 10 roasters > 500 from one roaster
+**3. Multi-Roaster Dataset** (Most Critical!) - Need 10+ diverse roasters (not just more Onyx). Equipment variety (drum, convection, fluid bed), style diversity (Nordic, traditional, dark), geographic spread. **Diversity > scale**: 200 from 10 roasters > 500 from one.
 
-**4. Duration Prediction Module**
-- Current: User specifies duration (design choice)
-- Future: Model predicts optimal duration
-- "This dense Ethiopian at 2100m needs 11.5 min for light roast"
+**4. Duration Prediction** - Model predicts optimal duration vs. user-specified
 
-**5. Non-Autoregressive Architectures**
-- Diffusion models for profile generation
-- Generate entire sequence at once (no error accumulation)
-- Eliminates exposure bias entirely
+**5. Non-Autoregressive** - Diffusion models eliminate exposure bias
 
 ---
 
-### What is the impact of this project? *(Rubric Question)*
+### What is the impact of this project?
 
 **For Specialty Coffee**:
 - Demonstrates feasibility of data-driven profile generation
