@@ -460,8 +460,15 @@ While RoastFormer isn't production-ready (0% physics compliance), that was never
 - Exposure bias is a real challenge requiring architectural solutions, not band-aids
 - Honest reporting of failures has research value—constrained generation's 4.5x degradation guides future work
 - Small datasets amplify architectural choices—every design decision matters at 144 samples
+- **Production standards vs research metrics**: Onyx maintains ±1°F tolerances for batch consistency. Our 10.4°F validation RMSE (10x looser) and 25.3°F generation MAE (25x looser) are acceptable for proof-of-concept starting profiles but far from production precision. Physics violations (0% monotonicity) are the primary barrier—even perfect RMSE wouldn't make profiles usable without physical validity
 
-**Path Forward**: Clear, literature-backed solutions exist (scheduled sampling, multi-roaster datasets, physics-informed losses). This work identifies both feasibility and specific obstacles, providing a foundation for practical implementation.
+**Path Forward**: Clear, literature-backed solutions exist to close the gap from research proof-of-concept (25.3°F MAE, 0% physics compliance) to production standards (±1°F tolerance, 100% valid profiles):
+- **Scheduled sampling** to address exposure bias
+- **Physics-informed loss functions** to enforce monotonicity and bounded heating rates during training
+- **Multi-roaster datasets** for generalization beyond Onyx's house style
+- **Tighter evaluation criteria** matching industry precision requirements
+
+This work identifies both feasibility and specific obstacles, providing a foundation for practical implementation.
 
 **Bottom line**: The value isn't in a perfect model—it's in systematic exploration, validated novel contributions, honest reporting, and clear next steps grounded in research literature.
 
