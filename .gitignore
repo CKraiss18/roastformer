@@ -99,9 +99,11 @@ Kraiss_Charlee_RoastFormer.pdf
 results/
 roastformer_ALL_EXPERIMENTS*/
 roastformer_RECOVERY*/
+
+# Old/intermediate data versions (keep only COMPLETE_20251120)
 roastformer_data_20251111_092727/
-roastformer_data*.zip
-roastformer_COMPLETE*.zip
+roastformer_data_20251111_092727.zip
+roastformer_data_20251118_090504.zip
 
 # Working docs (keep only presentation-ready docs)
 docs/ACTION_PLAN*.md
