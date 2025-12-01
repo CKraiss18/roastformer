@@ -14,13 +14,18 @@ build/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Dataset files (IMPORTANT - don't push large data to GitHub!)
-onyx_dataset*/
+# Dataset files
+# NOTE: Allowing onyx_dataset folders for transparency (raw scrapes ~30MB total)
+# Exceptions MUST come first (gitignore processes top-to-bottom)
+!onyx_dataset*/**
+!preprocessed_data/**
+# Then block other JSON/CSV files
 *.json
 *.csv
-# Exception: Keep small metadata files
-!dataset_summary.csv
-!complete_dataset.json
+# Re-allow dataset files
+!onyx_dataset*/**/*.json
+!onyx_dataset*/**/*.csv
+!preprocessed_data/*.json
 
 # Model checkpoints
 *.pth
