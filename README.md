@@ -108,8 +108,6 @@ The model conditions on **17 features** across three modalities:
 
 **Continuous (4)**: Target finish temp, Altitude, Bean density, Caffeine content
 
-The cross-attention mechanism allows the model to selectively attend to different conditioning features at each time step, learning which bean characteristics and flavor targets are relevant for predicting each temperature value.
-
 ---
 
 ### Positional Encoding: Empirical Comparison
@@ -469,18 +467,6 @@ Proper solutions require training-time fixes:
 ### Lessons Learned
 
 RoastFormer isn't production-ready (0% physics compliance, 25x looser than Onyx's ±1°F standard), but demonstrates **proof-of-concept feasibility** with clear paths forward:
-
-**Key Successes**:
-- Flavor conditioning validated (+14% improvement)
-- Large models work on small data (d=256 best despite 51,843:1 ratio)
-- Normalization discovery (27x speedup) taught systematic debugging
-- Domain metrics revealed what generic RMSE missed (0% physics compliance)
-
-**Critical Insights**:
-- Post-processing can't fix training issues (constrained generation 4.5x worse)
-- Exposure bias needs architectural solutions (scheduled sampling, not band-aids)
-- Small datasets amplify every choice (144 samples = high-stakes decisions)
-- Physics > accuracy: Even perfect RMSE useless without valid profiles
 
 **Path Forward** (literature-backed):
 Scheduled sampling + physics-informed losses + multi-roaster data → Close gap from 25.3°F MAE (0% valid) to ±1°F (100% valid)
