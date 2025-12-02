@@ -216,6 +216,39 @@ The implementation consists of three main components:
 - Gradient clipping and weight decay
 - Checkpoint saving
 
+---
+
+### Architecture Overview
+
+**Multi-Modal Conditioning Module** ([`src/model/transformer_adapter.py`](src/model/transformer_adapter.py)):
+```python
+# Categorical: origin, process, variety, roast_level → Embeddings (32-dim each)
+# Flavors: Multi-hot vector → Linear projection (32-dim)
+# Continuous: target_temp, altitude, density → Linear projection (32-dim)
+# Output: Concatenated condition vector (6 × 32 = 192-dim)
+```
+
+**Transformer Decoder** ([`src/model/transformer_adapter.py`](src/model/transformer_adapter.py)):
+```python
+# Input: Temperature sequence (batch, seq_len) + conditioning features
+# 1. Embed temps (1 → d_model=256)
+# 2. Add positional encoding (sinusoidal/learned/RoPE)
+# 3. Cross-attention with conditioning (6 layers, 8 heads)
+# 4. Causal masking (autoregressive)
+# 5. Output projection (d_model → 1 temperature value)
+```
+
+**Training Loop** ([`train_transformer.py`](train_transformer.py)):
+```python
+# Optimizer: AdamW (lr=1e-4, weight_decay=0.01)
+# Scheduler: CosineAnnealingLR
+# Regularization: Dropout 0.1, gradient clipping (max_norm=1.0)
+# Early stopping: patience=20 epochs
+# Loss: MSE (normalized temperatures)
+```
+
+---
+
 ### Usage Example
 
 ```python
