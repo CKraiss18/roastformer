@@ -62,6 +62,9 @@ Coffee roasting is a **sequential generation problem** where each temperature me
 - **Context** = All previous temperatures inform next prediction
 - **Conditioning** = Bean characteristics + desired flavors guide generation
 
+![Profile and RoR Example](profile_ROR_example.png)
+*Example roast profile showing temperature curve (top) and rate-of-rise (bottom). Each point is a "token" in the sequence, with the model predicting the next temperature based on all previous temperatures and conditioning features.*
+
 **Key constraints**: Multi-modal features (categorical + continuous + multi-hot), physics laws (monotonicity, bounded heating rates), small data (144 samples), domain-specific evaluation beyond RMSE.
 
 ---
