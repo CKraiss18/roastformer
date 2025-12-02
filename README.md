@@ -468,30 +468,24 @@ Proper solutions require training-time fixes:
 
 ### Lessons Learned
 
-While RoastFormer isn't production-ready (0% physics compliance), that was never the point. This project demonstrates **proof-of-concept feasibility** and validates the core approach:
+RoastFormer isn't production-ready (0% physics compliance, 25x looser than Onyx's ±1°F standard), but demonstrates **proof-of-concept feasibility** with clear paths forward:
 
-**What Worked**:
-- Flavor conditioning improves performance (+14%)—validating the novel contribution
-- Large models can succeed in small-data regimes with proper techniques (normalization, regularization, early stopping)
-- Systematic debugging (normalization discovery) taught more than immediate success
-- Domain-specific evaluation revealed limitations that generic metrics missed
+**Key Successes**:
+- Flavor conditioning validated (+14% improvement)
+- Large models work on small data (d=256 best despite 51,843:1 ratio)
+- Normalization discovery (27x speedup) taught systematic debugging
+- Domain metrics revealed what generic RMSE missed (0% physics compliance)
 
-**What We Learned**:
-- Post-processing constraints cannot fix training-time issues—physics violations require training-time solutions (scheduled sampling, physics-informed losses)
-- Exposure bias is a real challenge requiring architectural solutions, not band-aids
-- Honest reporting of failures has research value—constrained generation's 4.5x degradation guides future work
-- Small datasets amplify architectural choices—every design decision matters at 144 samples
-- **Production standards vs research metrics**: Onyx maintains ±1°F tolerances for batch consistency. Our 10.4°F validation RMSE (10x looser) and 25.3°F generation MAE (25x looser) are acceptable for proof-of-concept starting profiles but far from production precision. Physics violations (0% monotonicity) are the primary barrier—even perfect RMSE wouldn't make profiles usable without physical validity
+**Critical Insights**:
+- Post-processing can't fix training issues (constrained generation 4.5x worse)
+- Exposure bias needs architectural solutions (scheduled sampling, not band-aids)
+- Small datasets amplify every choice (144 samples = high-stakes decisions)
+- Physics > accuracy: Even perfect RMSE useless without valid profiles
 
-**Path Forward**: Clear, literature-backed solutions exist to close the gap from research proof-of-concept (25.3°F MAE, 0% physics compliance) to production standards (±1°F tolerance, 100% valid profiles):
-- **Scheduled sampling** to address exposure bias
-- **Physics-informed loss functions** to enforce monotonicity and bounded heating rates during training
-- **Multi-roaster datasets** for generalization beyond Onyx's house style
-- **Tighter evaluation criteria** matching industry precision requirements
+**Path Forward** (literature-backed):
+Scheduled sampling + physics-informed losses + multi-roaster data → Close gap from 25.3°F MAE (0% valid) to ±1°F (100% valid)
 
-This work identifies both feasibility and specific obstacles, providing a foundation for practical implementation.
-
-**Bottom line**: The value isn't in a perfect model—it's in systematic exploration, validated novel contributions, honest reporting, and clear next steps grounded in research literature.
+**Bottom line**: Value is in validated contributions, honest failure reporting, and research-grounded solutions—not perfection.
 
 ---
 
