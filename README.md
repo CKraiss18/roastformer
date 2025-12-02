@@ -69,12 +69,6 @@ Coffee roasting is a **sequential generation problem** where each temperature me
 
 ---
 
-### Novel Contribution: Flavor-Conditioned Generation
-
-**First transformer model to condition roast profile generation on desired flavor outcomes** (e.g., "berries", "chocolate", "floral"). Validated with **+14% performance improvement** over no-flavor baseline.
-
----
-
 ### Data Sourcing: Web Scraping Onyx Coffee Lab
 
 Built custom scraper with **additive batch tracking** (no duplicates across runs):
