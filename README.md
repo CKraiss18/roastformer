@@ -163,8 +163,8 @@ This validates that **task-relevant conditioning** improves generation beyond ju
 
 **Training vs Generation Gap**:
 - Training RMSE: **10.4°F** (model sees real temps, perfect information)
-- Generation MAE: **25.3°F** (model sees own predictions, errors compound)
-- **2.4x degradation** from training to generation
+- Generation RMSE: **29.8°F** (model sees own predictions, errors compound)
+- **2.9x degradation** from training to generation
 
 **Physics Compliance Reveals the Problem**:
 
@@ -173,7 +173,7 @@ Roast profiles must obey physical laws, but our generated profiles achieved:
 - ⚠️ **Bounded heating rate: 28.8%** (20-100°F/min required, most violate)
 - ✅ **Smooth transitions: 98.7%** (equipment constraints respected)
 
-**Why This Matters**: Standard metrics (10.4°F RMSE, 25.3°F MAE) suggest "reasonable" performance, but domain-specific physics metrics reveal **invalid profiles**. This demonstrates that:
+**Why This Matters**: Standard metrics (10.4°F → 29.8°F RMSE) suggest "reasonable" performance, but domain-specific physics metrics reveal **invalid profiles**. This demonstrates that:
 1. **Exposure bias is real**: Model never learned to handle its own errors during training
 2. **Domain evaluation is essential**: Generic metrics miss critical failures
 3. **Solutions must address training**: Post-processing can't fix what wasn't learned (attempted physics constraints made performance 4.5x worse)
