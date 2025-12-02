@@ -159,33 +159,24 @@ This validates that **task-relevant conditioning** improves generation beyond ju
 
 ### Autoregressive Generation & Exposure Bias
 
-**Challenge**: We initially attempted traditional autoregressive generation (model sees its own predictions during training), but errors exploded as mistakes compounded. We opted for **teacher forcing**—training where the model sees real temperatures—but this creates exposure bias: model trained on real temps struggles generating independently when it must rely on its own predictions.
+**The Challenge**: We initially attempted traditional autoregressive generation (model sees its own predictions during training), but errors exploded as mistakes compounded. We opted for **teacher forcing**—training where the model sees real temperatures—but this creates **exposure bias**.
 
-**Evidence**: Training RMSE 10.4°F | Generation MAE 25.3°F (**2.4x degradation**)
+**Training vs Generation Gap**:
+- Training RMSE: **10.4°F** (model sees real temps, perfect information)
+- Generation MAE: **25.3°F** (model sees own predictions, errors compound)
+- **2.4x degradation** from training to generation
 
-**Physics Compliance Failures**:
+**Physics Compliance Reveals the Problem**:
 
-What roast profiles **must follow**:
-- ✅ **Monotonicity**: Temperature only increases after turning point (no cooling mid-roast)
-- ✅ **Bounded heating rate**: 20-100°F/min (no scorching or baking)
-- ✅ **Smooth transitions**: No sudden jumps (equipment limitation)
+Roast profiles must obey physical laws, but our generated profiles achieved:
+- ❌ **Monotonicity: 0%** (profiles cool mid-roast—physically impossible)
+- ⚠️ **Bounded heating rate: 28.8%** (20-100°F/min required, most violate)
+- ✅ **Smooth transitions: 98.7%** (equipment constraints respected)
 
-What our model **achieved**:
-- ❌ Monotonicity: **0%** (profiles cool mid-roast—physically impossible)
-- ⚠️ Bounded RoR: **28.8%** (heating rates too fast/slow)
-- ✅ Smooth: **98.7%** (respected equipment constraints)
-
-This is **exposure bias**—models not exposed to their own errors during training fail when generating autonomously.
-
----
-
-### Domain-Specific Evaluation: Beyond Generic Metrics
-
-**Generic metrics** (misleading): Training RMSE 10.4°F ✅, Generation MAE 25.3°F ⚠️
-
-**Domain metrics** (revealing): Monotonicity 0% ❌, Bounded RoR 28.8% ⚠️, Smooth transitions 98.7% ✅
-
-**Insight**: Standard metrics said "reasonable," physics metrics revealed "invalid profiles." Domain applications require domain-specific validation—understanding physical constraints is essential for proper evaluation.
+**Why This Matters**: Standard metrics (10.4°F RMSE, 25.3°F MAE) suggest "reasonable" performance, but domain-specific physics metrics reveal **invalid profiles**. This demonstrates that:
+1. **Exposure bias is real**: Model never learned to handle its own errors during training
+2. **Domain evaluation is essential**: Generic metrics miss critical failures
+3. **Solutions must address training**: Post-processing can't fix what wasn't learned (attempted physics constraints made performance 4.5x worse)
 
 ---
 
