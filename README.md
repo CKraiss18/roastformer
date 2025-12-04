@@ -375,9 +375,9 @@ python generate_profiles.py \
   --show-physics-check
 ```
 
-**Interactive Jupyter Demo** (Recommended for presentations):
+**Interactive Jupyter Demo**:
 
-See `RoastFormer_Evaluation_Demo_COMPLETE.ipynb` **Cells 5-8** for live demonstrations:
+See `RoastFormer_Evaluation_Demo_COMPLETE.ipynb` for live demonstrations:
 
 **Demo 1: Real-Time Generation**
 ```python
@@ -431,12 +431,6 @@ profiles = {o: model.generate(origin=o, ...) for o in origins}
 plot_multi_origin_comparison(profiles)
 # → Model learns origin-specific patterns (altitude, processing effects)
 ```
-
-**Presentation Tips**:
-- Pre-load model before demo (5 sec load time)
-- Have backup pre-generated profiles (if live demo fails)
-- Run Cells 5-8 sequentially (each takes 1-2 seconds)
-- Total demo time: 5-7 minutes with explanations
 
 ---
 
