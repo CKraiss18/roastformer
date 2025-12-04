@@ -41,7 +41,14 @@
 ### Coffee Journey: Seed to Cup
 
 ![Seed to Cup](seed-to-cup.jpeg)
-*Roasting transforms green beans into aromatic coffee through controlled heating, developing 800+ flavor compounds. This critical 10-15 minute process determines final cup quality.*
+
+Coffee begins as a **cherry** growing on trees at high altitudes (1200-2300 meters). After 6-9 months of ripening, farmers hand-pick red cherries and **process** them to extract the green seed inside:
+
+- **Washed**: Cherry pulp removed immediately, beans fermented and washed → clean, bright flavors
+- **Natural**: Cherries sun-dried whole, fruit removed after drying → fruity, wine-like flavors
+- **Honey**: Pulp removed, sticky mucilage left on during drying → sweet, balanced flavors
+
+The resulting **green beans** are stable for 6-12 months and shipped worldwide. **Roasting** transforms these green beans into aromatic coffee through controlled heating (10-15 minutes), developing 800+ flavor compounds. This critical roasting step determines final cup quality—and is where RoastFormer intervenes.
 
 ---
 
