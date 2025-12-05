@@ -484,6 +484,9 @@ We conducted 7 systematic experiments to validate design choices and understand 
 | **Smooth Transitions** | 98.7% | ✅ Good |
 | **Overall Valid** | 0.0% | ❌ None pass |
 
+![Physics Validation Demo](demo_physics_validation.png)
+*Physics validation analysis showing constraint compliance across generated profiles.*
+
 **Analysis**: Temperature accuracy reasonable (25°F MAE), but physics violations reveal autoregressive exposure bias.
 
 ---
@@ -499,6 +502,9 @@ We conducted 7 systematic experiments to validate design choices and understand 
 
 ![Example Use Cases](roastformer_EVALUATION_20251120_170612/example_use_cases.png)
 *Diverse profiles: Ethiopian (berry/floral), Colombian (chocolate), Kenyan (citrus), Guatemala (balanced). Different origins → distinct temperature progressions.*
+
+![Origin Comparison Demo](demo_origin_comparison.png)
+*Interactive demo comparing generated profiles across different coffee origins.*
 
 ---
 
